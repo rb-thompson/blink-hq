@@ -1,26 +1,126 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-deep: #0a0e1a;
+  --bg-panel: #131629;
+  --bg-card: #1a1f3a;
+  --cyan: #00f0ff;
+  --magenta: #ff00aa;
+  --green: #00ff88;
+  --amber: #ffaa00;
+  --text: #e0e0f0;
+  --text-dim: #6a6a8a;
+  --scanline-opacity: 0.03;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+}
+
+/* Scanline overlay */
+.scanlines::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, var(--scanline-opacity)) 2px,
+    rgba(0, 0, 0, var(--scanline-opacity)) 4px
+  );
+}
+
+/* CRT vignette */
+.crt-vignette::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+/* Pixel font simulation */
+.pixel-text {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 10px;
+  image-rendering: pixelated;
+}
+
+/* Glow effects */
+.glow-cyan { text-shadow: 0 0 6px var(--cyan), 0 0 12px var(--cyan); color: var(--cyan); }
+.glow-magenta { text-shadow: 0 0 6px var(--magenta), 0 0 12px var(--magenta); color: var(--magenta); }
+.glow-green { text-shadow: 0 0 6px var(--green), 0 0 12px var(--green); color: var(--green); }
+.glow-amber { text-shadow: 0 0 6px var(--amber), 0 0 12px var(--amber); color: var(--amber); }
+
+/* Status pulse animations */
+@keyframes pulse-active {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--cyan); }
+  50% { opacity: 0.8; box-shadow: 0 0 16px var(--cyan), 0 0 24px var(--cyan); }
+}
+
+@keyframes pulse-thinking {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes blink-cursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes scroll-text {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+@keyframes float-particle {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
+}
+
+@keyframes data-stream {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes checkmark-float {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-20px) scale(0.5); opacity: 0; }
+}
+
+@keyframes status-bar-scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes flicker {
+  0%, 97%, 100% { opacity: 1; }
+  98% { opacity: 0.85; }
+  99% { opacity: 0.95; }
+}
+
+.animate-flicker {
+  animation: flicker 4s infinite;
+}
+
+/* Ambient stars */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.8; }
 }

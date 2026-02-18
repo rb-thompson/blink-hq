@@ -1,65 +1,98 @@
-import Image from "next/image";
+import Header from '@/components/Header';
+import Workstation from '@/components/Workstation';
+import StatusBar from '@/components/StatusBar';
+import AmbientParticles from '@/components/AmbientParticles';
+import StarField from '@/components/StarField';
+import ActivityLog from '@/components/ActivityLog';
+import SystemStats from '@/components/SystemStats';
+import { AGENTS } from '@/components/types';
 
 export default function Home() {
+  // Layout: Blink center top, others arranged around
+  const topRow = AGENTS.filter(a => ['Volt', 'Blink', 'Pixel'].includes(a.name));
+  const midRow = AGENTS.filter(a => ['Scout', 'Spark', 'Cipher', 'Echo'].includes(a.name));
+  const botAgent = AGENTS.filter(a => a.name === 'Atlas');
+
+  // Ensure correct order
+  const topOrdered = [
+    AGENTS.find(a => a.name === 'Volt')!,
+    AGENTS.find(a => a.name === 'Blink')!,
+    AGENTS.find(a => a.name === 'Pixel')!,
+  ];
+  const midOrdered = [
+    AGENTS.find(a => a.name === 'Scout')!,
+    AGENTS.find(a => a.name === 'Spark')!,
+    AGENTS.find(a => a.name === 'Cipher')!,
+    AGENTS.find(a => a.name === 'Echo')!,
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="scanlines crt-vignette min-h-screen relative">
+      {/* Background layers */}
+      <StarField />
+      <AmbientParticles />
+
+      {/* Main content */}
+      <div className="relative z-10 flex flex-col min-h-screen pb-8">
+        <Header />
+
+        {/* Office floor layout */}
+        <div className="flex-1 flex flex-col items-center justify-center gap-2 px-4">
+          {/* Room border */}
+          <div
+            className="relative border rounded-lg p-4 max-w-5xl w-full"
+            style={{
+              backgroundColor: '#131629aa',
+              borderColor: '#00f0ff10',
+              backdropFilter: 'blur(4px)',
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            {/* Room label */}
+            <div className="absolute -top-3 left-4 px-2 pixel-text" style={{ fontSize: '8px', color: '#6a6a8a', backgroundColor: '#131629' }}>
+              ▸ OPERATIONS FLOOR — DECK 7
+            </div>
+
+            {/* Top row: Volt - BLINK - Pixel */}
+            <div className="flex justify-center gap-4 mb-2">
+              {topOrdered.map(agent => (
+                <Workstation key={agent.name} agent={agent} />
+              ))}
+            </div>
+
+            {/* Decorative floor line */}
+            <div className="flex items-center justify-center gap-2 my-1">
+              <div className="h-[1px] flex-1" style={{ background: 'linear-gradient(90deg, transparent, #00f0ff10, transparent)' }} />
+            </div>
+
+            {/* Mid row: Scout - Spark - Cipher - Echo */}
+            <div className="flex justify-center gap-3">
+              {midOrdered.map(agent => (
+                <Workstation key={agent.name} agent={agent} />
+              ))}
+            </div>
+
+            {/* Floor line */}
+            <div className="flex items-center justify-center gap-2 my-1">
+              <div className="h-[1px] flex-1" style={{ background: 'linear-gradient(90deg, transparent, #00f0ff10, transparent)' }} />
+            </div>
+
+            {/* Bottom: Atlas (wide desk) */}
+            <div className="flex justify-center">
+              {botAgent.map(agent => (
+                <Workstation key={agent.name} agent={agent} />
+              ))}
+            </div>
+          </div>
+
+          {/* Side panels */}
+          <div className="max-w-5xl w-full grid grid-cols-2 gap-3 mt-2">
+            <ActivityLog />
+            <SystemStats />
+          </div>
         </div>
-      </main>
+      </div>
+
+      <StatusBar />
     </div>
   );
 }
