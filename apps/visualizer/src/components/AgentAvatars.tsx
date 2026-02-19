@@ -2,135 +2,134 @@
 
 import { AGENT_COLORS } from './palette';
 
-// Clean vector-style agent avatars - focus on form and personality
-function VectorAgent({ name, color, size = 48, isActive = false }: { name: string; color: string; size?: number; isActive?: boolean }) {
+// Original pixel-art style agent avatars
+function PixelAgent({ name, color, size = 48, isActive = false }: { name: string; color: string; size?: number; isActive?: boolean }) {
+  const scale = size / 48;
   const opacity = isActive ? 1 : 0.7;
-  const glow = isActive ? `0 0 8px ${color}40` : 'none';
 
   return (
-    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" style={{ filter: `drop-shadow(${glow})` }}>
-      {/* Body - clean geometric shape */}
-      <rect
-        x="14"
-        y="24"
-        width="20"
-        height="20"
-        rx="4"
-        fill={color}
-        opacity={opacity}
-        stroke={color}
-        strokeWidth="1"
-      />
+    <div
+      className="relative"
+      style={{
+        width: size,
+        height: size,
+        imageRendering: 'pixelated',
+      }}
+    >
+      <svg width={size} height={size} viewBox="0 0 48 48" fill="none">
+        {/* Shadow */}
+        <ellipse cx="24" cy="44" rx="16" ry="2" fill="#000" opacity="0.3" />
 
-      {/* Head - distinctive shape per agent */}
-      <circle cx="24" cy="16" r="10" fill={color} opacity={opacity} stroke={color} strokeWidth="1" />
+        {/* Body - pixelated */}
+        <rect x="16" y="24" width="16" height="16" fill={color} opacity={opacity} />
+        <rect x="14" y="20" width="20" height="12" fill={color} opacity={opacity} />
 
-      {/* Agent-specific features */}
-      {name === 'Blink' && (
-        <>
-          {/* Lightning bolt antenna */}
-          <path d="M24 6 L26 10 L22 10 L24 14" stroke={color} strokeWidth="2" fill="none" opacity={0.9} />
-          {/* Eyes - sharp */}
-          <rect x="20" y="14" width="2" height="2" fill="#000" />
-          <rect x="26" y="14" width="2" height="2" fill="#000" />
-        </>
-      )}
+        {/* Agent-specific pixel features */}
+        {name === 'Blink' && (
+          <>
+            {/* Lightning bolt antenna */}
+            <rect x="22" y="8" width="4" height="8" fill="#ffff00" opacity={0.9} />
+            <rect x="20" y="14" width="2" height="2" fill="#000" />
+            <rect x="26" y="14" width="2" height="2" fill="#000" />
+          </>
+        )}
 
-      {name === 'Spark' && (
-        <>
-          {/* Flame pattern on head */}
-          <path d="M20 8 Q24 4 28 8 Q26 12 24 10 Q22 12 20 8" fill="#ffaa00" opacity={0.8} />
-          {/* Eyes - energetic */}
-          <circle cx="21" cy="15" r="1.5" fill="#000" />
-          <circle cx="27" cy="15" r="1.5" fill="#000" />
-        </>
-      )}
+        {name === 'Spark' && (
+          <>
+            {/* Flame on head */}
+            <rect x="18" y="10" width="12" height="8" fill="#ff6600" opacity={0.8} />
+            <rect x="20" y="12" width="8" height="4" fill="#ffff00" opacity={0.9} />
+            <rect x="20" y="16" width="2" height="2" fill="#000" />
+            <rect x="26" y="16" width="2" height="2" fill="#000" />
+          </>
+        )}
 
-      {name === 'Volt' && (
-        <>
-          {/* Circuit pattern on head */}
-          <path d="M18 12 L22 12 L22 16 L26 16 L26 12 L30 12" stroke={color} strokeWidth="1" fill="none" opacity={0.6} />
-          {/* Eyes - thoughtful */}
-          <ellipse cx="21" cy="15" rx="1.5" ry="2" fill="#000" />
-          <ellipse cx="27" cy="15" rx="1.5" ry="2" fill="#000" />
-        </>
-      )}
+        {name === 'Volt' && (
+          <>
+            {/* Circuit pattern */}
+            <rect x="16" y="12" width="16" height="8" fill="#aaaaff" opacity={0.8} />
+            <rect x="18" y="14" width="2" height="2" fill="#6666ff" />
+            <rect x="22" y="14" width="2" height="2" fill="#6666ff" />
+            <rect x="26" y="14" width="2" height="2" fill="#6666ff" />
+            <rect x="20" y="16" width="2" height="2" fill="#000" />
+            <rect x="26" y="16" width="2" height="2" fill="#000" />
+          </>
+        )}
 
-      {name === 'Pixel' && (
-        <>
-          {/* Paint brush arm */}
-          <rect x="32" y="26" width="6" height="2" fill="#8B4513" />
-          <rect x="36" y="22" width="2" height="8" fill="#8B4513" />
-          {/* Eyes - creative */}
-          <path d="M20 14 Q22 12 24 14 Q26 12 28 14" stroke="#000" strokeWidth="1" fill="none" />
-        </>
-      )}
+        {name === 'Pixel' && (
+          <>
+            {/* Paint brush */}
+            <rect x="30" y="22" width="6" height="2" fill="#8B4513" />
+            <rect x="34" y="18" width="2" height="8" fill="#8B4513" />
+            <rect x="20" y="16" width="2" height="2" fill="#000" />
+            <rect x="26" y="16" width="2" height="2" fill="#000" />
+            {/* Color squares */}
+            <rect x="14" y="10" width="4" height="4" fill="#ff0000" />
+            <rect x="18" y="10" width="4" height="4" fill="#00ff00" />
+            <rect x="14" y="14" width="4" height="4" fill="#0000ff" />
+            <rect x="18" y="14" width="4" height="4" fill="#ffff00" />
+          </>
+        )}
 
-      {name === 'Scout' && (
-        <>
-          {/* Radar dish */}
-          <ellipse cx="32" cy="10" rx="4" ry="3" fill="#cccccc" />
-          <ellipse cx="32" cy="10" rx="3" ry="2" fill="#888888" />
-          {/* Eyes - alert */}
-          <polygon points="20,14 22,12 24,14 22,16" fill="#000" />
-          <polygon points="26,14 28,12 30,14 28,16" fill="#000" />
-        </>
-      )}
+        {name === 'Scout' && (
+          <>
+            {/* Radar dish */}
+            <rect x="20" y="8" width="8" height="6" fill="#cccccc" />
+            <rect x="22" y="12" width="4" height="2" fill="#666666" />
+            <rect x="20" y="16" width="2" height="2" fill="#000" />
+            <rect x="26" y="16" width="2" height="2" fill="#000" />
+          </>
+        )}
 
-      {name === 'Echo' && (
-        <>
-          {/* Sound waves */}
-          <path d="M16 16 Q18 14 20 16 Q18 18 16 16" stroke={color} strokeWidth="1" fill="none" opacity={0.7} />
-          <path d="M28 16 Q30 14 32 16 Q30 18 28 16" stroke={color} strokeWidth="1" fill="none" opacity={0.7} />
-          {/* Eyes - focused */}
-          <rect x="20" y="14" width="3" height="3" fill="#000" rx="1" />
-          <rect x="25" y="14" width="3" height="3" fill="#000" rx="1" />
-        </>
-      )}
+        {name === 'Echo' && (
+          <>
+            {/* Sound waves */}
+            <rect x="14" y="12" width="20" height="8" fill="#44ff88" opacity={0.8} />
+            <rect x="16" y="14" width="2" height="2" fill="#000" />
+            <rect x="26" y="14" width="2" height="2" fill="#000" />
+            {/* Checkmarks */}
+            <rect x="18" y="18" width="4" height="2" fill="#00ff88" />
+            <rect x="24" y="18" width="4" height="2" fill="#00ff88" />
+          </>
+        )}
 
-      {name === 'Cipher' && (
-        <>
-          {/* Lock symbol */}
-          <rect x="20" y="10" width="8" height="6" rx="1" fill="#cccccc" />
-          <circle cx="24" cy="16" r="1.5" fill="#000" />
-          <rect x="23" y="16" width="2" height="2" fill="#000" />
-          {/* Eyes - calculating */}
-          <path d="M20 14 L24 14 M24 14 L24 18" stroke="#000" strokeWidth="1" />
-          <path d="M26 14 L30 14 M26 16 L30 16" stroke="#000" strokeWidth="1" />
-        </>
-      )}
+        {name === 'Cipher' && (
+          <>
+            {/* Lock */}
+            <rect x="18" y="10" width="12" height="10" fill="#cccccc" />
+            <rect x="21" y="6" width="6" height="4" fill="#cccccc" />
+            <circle cx="24" cy="16" r="1" fill="#000" />
+            <rect x="20" y="18" width="2" height="2" fill="#000" />
+            <rect x="26" y="18" width="2" height="2" fill="#000" />
+          </>
+        )}
 
-      {name === 'Atlas' && (
-        <>
-          {/* Globe lines */}
-          <circle cx="24" cy="14" r="8" stroke={color} strokeWidth="1" fill="none" opacity={0.4} />
-          <path d="M16 14 L32 14" stroke={color} strokeWidth="1" opacity={0.4} />
-          <path d="M24 6 L24 22" stroke={color} strokeWidth="1" opacity={0.4} />
-          {/* Eyes - wise */}
-          <circle cx="21" cy="15" r="1" fill="#000" />
-          <circle cx="27" cy="15" r="1" fill="#000" />
-          <circle cx="21" cy="15" r="0.3" fill="#fff" />
-          <circle cx="27" cy="15" r="0.3" fill="#fff" />
-        </>
-      )}
+        {name === 'Atlas' && (
+          <>
+            {/* Globe */}
+            <circle cx="24" cy="14" r="8" fill="#4a90e2" opacity={0.8} />
+            <rect x="20" y="12" width="8" height="4" fill="#2e7d32" opacity={0.6} />
+            <rect x="20" y="16" width="2" height="2" fill="#000" />
+            <rect x="26" y="16" width="2" height="2" fill="#000" />
+          </>
+        )}
 
-      {/* Arms - subtle */}
-      <rect x="10" y="28" width="8" height="3" rx="1.5" fill={color} opacity={opacity * 0.8} />
-      <rect x="30" y="28" width="8" height="3" rx="1.5" fill={color} opacity={opacity * 0.8} />
-
-      {/* Legs - subtle */}
-      <rect x="17" y="44" width="4" height="4" rx="2" fill={color} opacity={opacity * 0.6} />
-      <rect x="27" y="44" width="4" height="4" rx="2" fill={color} opacity={opacity * 0.6} />
-    </svg>
+        {/* Arms and legs - pixelated */}
+        <rect x="12" y="26" width="6" height="3" fill={color} opacity={opacity * 0.8} />
+        <rect x="30" y="26" width="6" height="3" fill={color} opacity={opacity * 0.8} />
+        <rect x="19" y="40" width="4" height="4" fill={color} opacity={opacity * 0.6} />
+        <rect x="25" y="40" width="4" height="4" fill={color} opacity={opacity * 0.6} />
+      </svg>
+    </div>
   );
 }
 
 export function AgentAvatar({ name, size = 48, isActive = false }: { name: string; size?: number; isActive?: boolean }) {
   const color = AGENT_COLORS[name] || '#00f0ff';
-  return <VectorAgent name={name} color={color} size={size} isActive={isActive} />;
+  return <PixelAgent name={name} color={color} size={size} isActive={isActive} />;
 }
 
-// Work activity visualizations
+// Work activity visualizations remain the same
 export function WorkVisualization({ workType, agentColor }: { workType: string; agentColor: string }) {
   const size = 80;
 
@@ -152,7 +151,7 @@ export function WorkVisualization({ workType, agentColor }: { workType: string; 
           {/* Magnifying glass */}
           <circle cx="35" cy="35" r="15" stroke={agentColor} strokeWidth="2" fill="none" />
           <circle cx="35" cy="35" r="8" fill={agentColor} opacity="0.1" />
-          <rect x="42" y="42" width="8" height="3" rx="1.5" fill={agentColor} />
+          <path d="M45 45 L55 55" stroke={agentColor} strokeWidth="3" strokeLinecap="round" />
           {/* Search lines */}
           <rect x="15" y="20" width="15" height="1" fill={agentColor} opacity="0.6" />
           <rect x="15" y="25" width="10" height="1" fill={agentColor} opacity="0.4" />

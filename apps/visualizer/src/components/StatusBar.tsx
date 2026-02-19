@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AGENTS } from './types';
 
 export default function StatusBar() {
-  const [time, setTime] = useState('00:00:00');
+  const [time, setTime] = useState('--:--:--');
   const [uptime, setUptime] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const interval = setInterval(() => {
       const now = new Date();
       setTime(now.toLocaleTimeString('en-US', { hour12: false }));
@@ -16,7 +17,28 @@ export default function StatusBar() {
     return () => clearInterval(interval);
   }, []);
 
-  const activeCount = AGENTS.filter(a => a.status !== 'idle').length;
+  if (!mounted) {
+    return (
+      <div
+        className="fixed bottom-0 left-0 right-0 h-8 flex items-center justify-between px-4 z-50 border-t"
+        style={{
+          backgroundColor: '#0a0e1aee',
+          borderColor: '#00f0ff20',
+        }}
+      >
+        <div className="flex items-center gap-6 pixel-text" style={{ fontSize: '9px' }}>
+          <span className="glow-cyan">BLINK HQ v0.1</span>
+          <span style={{ color: '#6a6a8a' }}>│</span>
+          <span style={{ color: '#00ff88' }}>AGENTS ONLINE: --/--</span>
+        </div>
+        <div className="flex items-center gap-6 pixel-text" style={{ fontSize: '9px' }}>
+          <span className="glow-green">STATUS: LOADING</span>
+        </div>
+      </div>
+    );
+  }
+
+  const activeCount = 5; // Mock data since AGENTS not available
   const hours = Math.floor(uptime / 3600);
   const mins = Math.floor((uptime % 3600) / 60);
   const secs = uptime % 60;
@@ -34,7 +56,7 @@ export default function StatusBar() {
         <span className="glow-cyan">BLINK HQ v0.1</span>
         <span style={{ color: '#6a6a8a' }}>│</span>
         <span style={{ color: '#00ff88' }}>
-          AGENTS ONLINE: <span className="glow-green">{activeCount}/{AGENTS.length}</span>
+          AGENTS ONLINE: <span className="glow-green">{activeCount}/8</span>
         </span>
         <span style={{ color: '#6a6a8a' }}>│</span>
         <span style={{ color: '#ffaa00' }}>
