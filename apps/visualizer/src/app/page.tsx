@@ -88,15 +88,6 @@ export default function Home() {
               ▸ OPERATIONS FLOOR — DECK 7
             </div>
 
-            {/* Office furniture */}
-            {/* Window component */}
-            {/* Window component */}
-            {/* Office furniture */}
-            {/* Office furniture */}
-            {/* Office furniture */}
-            {/* Office furniture */}
-            {/* Office furniture */}
-            {/* Office furniture */}
 
             {/* Office grid layout - 4x2 grid with equal spacing */}
             <div className="grid grid-cols-4 grid-rows-2 gap-4 mt-12">

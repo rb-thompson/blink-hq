@@ -28,6 +28,30 @@ export function PottedPlant({ top, left, size = 'small' }: { top: string; left: 
           borderRadius: '50% 50% 0 0',
         }}
       />
+      <div
+        className="absolute"
+        style={{
+          bottom: size === 'large' ? '15px' : '8px',
+          left: '20%',
+          width: '5px',
+          height: size === 'large' ? '16px' : '10px',
+          backgroundColor: '#32CD32',
+          borderRadius: '50% 50% 0 50%',
+          transform: 'rotate(-20deg)',
+        }}
+      />
+      <div
+        className="absolute"
+        style={{
+          bottom: size === 'large' ? '15px' : '8px',
+          right: '20%',
+          width: '5px',
+          height: size === 'large' ? '16px' : '10px',
+          backgroundColor: '#32CD32',
+          borderRadius: '50% 50% 50% 0',
+          transform: 'rotate(20deg)',
+        }}
+      />
     </div>
   );
 }
@@ -69,6 +93,16 @@ export function ServerRack({ top, left }: { top: string; left: string }) {
       <div
         className="absolute"
         style={{
+          top: '35px',
+          left: '4px',
+          right: '4px',
+          height: '8px',
+          backgroundColor: '#0a0e1a',
+        }}
+      />
+      <div
+        className="absolute"
+        style={{
           top: '17px',
           right: '8px',
           width: '2px',
@@ -86,6 +120,17 @@ export function ServerRack({ top, left }: { top: string; left: string }) {
           height: '2px',
           backgroundColor: '#00f0ff',
           opacity: 0.6,
+        }}
+      />
+      <div
+        className="absolute"
+        style={{
+          top: '37px',
+          right: '6px',
+          width: '2px',
+          height: '2px',
+          backgroundColor: '#ffaa00',
+          opacity: 0.7,
         }}
       />
     </div>
@@ -132,22 +177,34 @@ export function CoffeeStation({ top, left }: { top: string; left: string }) {
           borderRadius: '0 0 3px 3px',
         }}
       />
+      <div
+        className="absolute"
+        style={{
+          top: '8px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '2px',
+          height: '4px',
+          backgroundColor: '#fff',
+          opacity: 0.3,
+        }}
+      />
     </div>
   );
 }
 
-export function Window({ top, left, width: windowWidth = 40 }: { top: string; left: string; width?: number }) {
+export function Window({ top, left, width = 40 }: { top: string; left: string; width?: number }) {
   return (
     <div
       className="absolute pointer-events-none"
       style={{
         top,
         left,
-        width: windowWidth,
-        height: 60,
-        backgroundColor: "#0a0e3a",
-        border: "2px solid #1a1f3a",
-        borderRadius: "2px",
+        width: width + 'px',
+        height: '60px',
+        backgroundColor: '#0a0e3a',
+        border: '2px solid #1a1f3a',
+        borderRadius: '2px',
         opacity: 0.8,
       }}
     >
@@ -155,31 +212,42 @@ export function Window({ top, left, width: windowWidth = 40 }: { top: string; le
         className="absolute"
         style={{
           top: 0,
-          left: "50%",
-          width: "2px",
-          height: "100%",
-          backgroundColor: "#1a1f3a",
+          left: '50%',
+          width: '2px',
+          height: '100%',
+          backgroundColor: '#1a1f3a',
         }}
       />
       <div
         className="absolute"
         style={{
-          top: "50%",
+          top: '50%',
           left: 0,
-          width: "100%",
-          height: "2px",
-          backgroundColor: "#1a1f3a",
+          width: '100%',
+          height: '2px',
+          backgroundColor: '#1a1f3a',
         }}
       />
       <div
         className="absolute rounded-full"
         style={{
-          top: "30%",
-          left: "70%",
-          width: "2px",
-          height: "2px",
-          backgroundColor: "#ffffff",
+          top: '30%',
+          left: '70%',
+          width: '2px',
+          height: '2px',
+          backgroundColor: '#ffffff',
           opacity: 0.6,
+        }}
+      />
+      <div
+        className="absolute rounded-full"
+        style={{
+          top: '60%',
+          left: '20%',
+          width: '1px',
+          height: '1px',
+          backgroundColor: '#ffffff',
+          opacity: 0.4,
         }}
       />
     </div>
