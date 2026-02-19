@@ -1,0 +1,29 @@
+[
+  {
+    "id": "spark",
+    "name": "Spark",
+    "icon": "🔥",
+    "color": "#00ff88",
+    "role": "Coder",
+    "defaultModel": "anthropic/claude-sonnet-4-6",
+    "description": "Builds components and features"
+  },
+  {
+    "id": "volt",
+    "name": "Volt",
+    "icon": "🧠",
+    "color": "#ffaa00",
+    "role": "Reasoner",
+    "defaultModel": "anthropic/claude-sonnet-4-6",
+    "description": "Architecture and analysis"
+  },
+  {
+    "id": "scout",
+    "name": "Scout",
+    "icon": "🔍",
+    "color": "#00f0ff",
+    "role": "Researcher",
+    "defaultModel": "anthropic/claude-sonnet-4-6",
+    "description": "Web research and data gathering"
+  }
+]
