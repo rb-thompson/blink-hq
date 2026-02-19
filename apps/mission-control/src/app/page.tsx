@@ -78,16 +78,29 @@ function AgentCard({ agent }: { agent: Agent }) {
 }
 
 export default function Dashboard() {
-  const [activityLog, setActivityLog] = useState(ACTIVITIES.slice(0, 5).map((a, i) => ({ ...a, id: i, time: new Date().toLocaleTimeString('en-US', { hour12: false }) })));
+  const [activityLog, setActivityLog] = useState(ACTIVITIES.slice(0, 5).map((a, i) => ({ ...a, id: i, time: '--:--:--' })));
   const [time, setTime] = useState('--:--:--');
   const [uptime, setUptime] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    let counter = 5;
+    setMounted(true);
+    
+    // Set initial times on client
+    const now = new Date();
+    setTime(now.toLocaleTimeString('en-US', { hour12: false }));
+    setActivityLog(prev => prev.map((entry, i) => ({
+      ...entry,
+      time: new Date(now.getTime() - (4 - i) * 3000).toLocaleTimeString('en-US', { hour12: false })
+    })));
+
     const interval = setInterval(() => {
-      const act = ACTIVITIES[counter % ACTIVITIES.length];
-      setActivityLog(prev => [...prev.slice(-8), { ...act, id: counter, time: new Date().toLocaleTimeString('en-US', { hour12: false }) }]);
-      counter++;
+      const act = ACTIVITIES[Math.floor(Math.random() * ACTIVITIES.length)];
+      setActivityLog(prev => [...prev.slice(-7), { 
+        ...act, 
+        id: Date.now(), 
+        time: new Date().toLocaleTimeString('en-US', { hour12: false }) 
+      }]);
     }, 4000);
 
     const timer = setInterval(() => {
@@ -101,12 +114,32 @@ export default function Dashboard() {
   const busyCount = AGENTS.filter(a => a.status === 'busy').length;
   const onlineCount = AGENTS.filter(a => a.status !== 'idle').length;
 
+  // Don't render dynamic time content until client-side
+  if (!mounted) {
+    return (
+      <div className="min-h-screen">
+        <Sidebar />
+        <div className="pl-16">
+          <div className="p-4">
+            <div className="text-center mb-6">
+              <h1 className="pixel-text" style={{ fontSize: '20px', letterSpacing: '0.3em', color: '#e0e0f0' }}>
+                BLINK HQ — MISSION CONTROL
+              </h1>
+              <div className="pixel-text mt-1" style={{ fontSize: '8px', color: '#6a6a8a' }}>
+                AGENT ORCHESTRATION DASHBOARD // LOADING...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       <Sidebar />
       <div className="pl-16">
         <div className="p-4">
-          {/* Header */}
           <div className="text-center mb-6">
             <h1 className="pixel-text" style={{ fontSize: '20px', letterSpacing: '0.3em', color: '#e0e0f0' }}>
               BLINK HQ — MISSION CONTROL
@@ -116,7 +149,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Stats bar */}
           <div className="flex justify-center gap-8 mb-6">
             {[
               { label: 'AGENTS', value: `${onlineCount}/${AGENTS.length}`, color: '#00f0ff' },
@@ -133,7 +165,6 @@ export default function Dashboard() {
           </div>
 
           <div className="max-w-7xl mx-auto grid grid-cols-12 gap-4">
-            {/* Agent Roster — left */}
             <div className="col-span-4">
               <div className="border rounded-md p-3 mb-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
                 <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
@@ -145,9 +176,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Center column */}
             <div className="col-span-5 flex flex-col gap-4">
-              {/* Task Queue */}
               <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
                 <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
                   ▸ TASK QUEUE
@@ -184,7 +213,6 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Activity Feed */}
               <div className="border rounded-md p-3 flex-1" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
                 <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
                   ▸ ACTIVITY FEED
@@ -201,9 +229,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Right column — System */}
             <div className="col-span-3 flex flex-col gap-4">
-              {/* System Health */}
               <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
                 <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
                   ▸ SYSTEM HEALTH
@@ -226,7 +252,6 @@ export default function Dashboard() {
                 ))}
               </div>
 
-              {/* Provider Status */}
               <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
                 <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
                   ▸ PROVIDERS
@@ -246,7 +271,6 @@ export default function Dashboard() {
                 ))}
               </div>
 
-              {/* Quick Actions */}
               <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
                 <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
                   ▸ QUICK ACTIONS
