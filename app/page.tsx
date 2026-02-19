@@ -80,7 +80,7 @@ export default function Dashboard() {
   const [time, setTime] = useState('--:--:--');
   const [mounted, setMounted] = useState(false);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     try {
       // Fetch sessions
       const sessRes = await fetch('/api/openclaw', {
@@ -160,7 +160,7 @@ export default function Dashboard() {
         setHistoryData(sysData.historySparklines ?? { cpu: [], ram_pct: [] });
       }
     } catch { /* ignore */ }
-  }, []);
+  };
 
   useEffect(() => {
     setMounted(true);
