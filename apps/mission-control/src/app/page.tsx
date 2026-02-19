@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Sidebar from '@/components/Sidebar';
 
 type Status = 'online' | 'busy' | 'idle';
 
@@ -101,161 +102,166 @@ export default function Dashboard() {
   const onlineCount = AGENTS.filter(a => a.status !== 'idle').length;
 
   return (
-    <div className="min-h-screen p-4">
-      {/* Header */}
-      <div className="text-center mb-6">
-        <h1 className="pixel-text glow-cyan" style={{ fontSize: '20px', letterSpacing: '0.3em' }}>
-          ⚡ BLINK HQ — MISSION CONTROL ⚡
-        </h1>
-        <div className="pixel-text mt-1" style={{ fontSize: '8px', color: '#6a6a8a' }}>
-          AGENT ORCHESTRATION DASHBOARD // {time} EST
-        </div>
-      </div>
-
-      {/* Stats bar */}
-      <div className="flex justify-center gap-8 mb-6">
-        {[
-          { label: 'AGENTS', value: `${onlineCount}/${AGENTS.length}`, color: '#00f0ff' },
-          { label: 'ACTIVE', value: String(busyCount), color: '#00ff88' },
-          { label: 'TASKS TODAY', value: '127', color: '#ffaa00' },
-          { label: 'TOKENS', value: '48.2K', color: '#ff00aa' },
-          { label: 'UPTIME', value: `${Math.floor(uptime / 60)}m ${uptime % 60}s`, color: '#00f0ff' },
-        ].map(s => (
-          <div key={s.label} className="text-center">
-            <div className="pixel-text" style={{ fontSize: '7px', color: '#6a6a8a' }}>{s.label}</div>
-            <div className="pixel-text" style={{ fontSize: '14px', color: s.color, textShadow: `0 0 8px ${s.color}40` }}>{s.value}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="max-w-7xl mx-auto grid grid-cols-12 gap-4">
-        {/* Agent Roster — left */}
-        <div className="col-span-4">
-          <div className="border rounded-md p-3 mb-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
-            <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
-              ▸ AGENT ROSTER
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {AGENTS.map(a => <AgentCard key={a.name} agent={a} />)}
+    <div className="min-h-screen">
+      <Sidebar />
+      <div className="pl-16">
+        <div className="p-4">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <h1 className="pixel-text" style={{ fontSize: '20px', letterSpacing: '0.3em', color: '#e0e0f0' }}>
+              BLINK HQ — MISSION CONTROL
+            </h1>
+            <div className="pixel-text mt-1" style={{ fontSize: '8px', color: '#6a6a8a' }}>
+              AGENT ORCHESTRATION DASHBOARD // {time} EST
             </div>
           </div>
-        </div>
 
-        {/* Center column */}
-        <div className="col-span-5 flex flex-col gap-4">
-          {/* Task Queue */}
-          <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
-            <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
-              ▸ TASK QUEUE
+          {/* Stats bar */}
+          <div className="flex justify-center gap-8 mb-6">
+            {[
+              { label: 'AGENTS', value: `${onlineCount}/${AGENTS.length}`, color: '#00f0ff' },
+              { label: 'ACTIVE', value: String(busyCount), color: '#00ff88' },
+              { label: 'TASKS TODAY', value: '127', color: '#ffaa00' },
+              { label: 'TOKENS', value: '48.2K', color: '#ff00aa' },
+              { label: 'UPTIME', value: `${Math.floor(uptime / 60)}m ${uptime % 60}s`, color: '#00f0ff' },
+            ].map(s => (
+              <div key={s.label} className="text-center">
+                <div className="pixel-text" style={{ fontSize: '7px', color: '#6a6a8a' }}>{s.label}</div>
+                <div className="pixel-text" style={{ fontSize: '14px', color: s.color }}>{s.value}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="max-w-7xl mx-auto grid grid-cols-12 gap-4">
+            {/* Agent Roster — left */}
+            <div className="col-span-4">
+              <div className="border rounded-md p-3 mb-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
+                <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
+                  ▸ AGENT ROSTER
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {AGENTS.map(a => <AgentCard key={a.name} agent={a} />)}
+                </div>
+              </div>
             </div>
-            <div className="space-y-2">
-              {TASKS.map(task => (
-                <div key={task.id} className="flex items-center gap-3 p-2 rounded" style={{ backgroundColor: '#1a1f3a' }}>
-                  <div className="flex-1">
-                    <div className="flex justify-between">
-                      <span className="pixel-text" style={{ fontSize: '8px', color: '#e0e0f0' }}>{task.name}</span>
-                      <span className="pixel-text" style={{
-                        fontSize: '7px',
-                        color: task.status === 'completed' ? '#00ff88' : task.status === 'active' ? '#ffaa00' : '#6a6a8a',
-                      }}>
-                        {task.status}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="pixel-text" style={{ fontSize: '6px', color: '#6a6a8a' }}>{task.agent}</span>
-                      <div className="flex-1 h-1 rounded-full" style={{ backgroundColor: '#ffffff08' }}>
-                        <div
-                          className="h-full rounded-full transition-all"
-                          style={{
-                            width: `${task.progress}%`,
-                            backgroundColor: task.status === 'completed' ? '#00ff88' : task.status === 'active' ? '#ffaa00' : '#6a6a8a',
-                          }}
-                        />
+
+            {/* Center column */}
+            <div className="col-span-5 flex flex-col gap-4">
+              {/* Task Queue */}
+              <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
+                <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
+                  ▸ TASK QUEUE
+                </div>
+                <div className="space-y-2">
+                  {TASKS.map(task => (
+                    <div key={task.id} className="flex items-center gap-3 p-2 rounded" style={{ backgroundColor: '#1a1f3a' }}>
+                      <div className="flex-1">
+                        <div className="flex justify-between">
+                          <span className="pixel-text" style={{ fontSize: '8px', color: '#e0e0f0' }}>{task.name}</span>
+                          <span className="pixel-text" style={{
+                            fontSize: '7px',
+                            color: task.status === 'completed' ? '#00ff88' : task.status === 'active' ? '#ffaa00' : '#6a6a8a',
+                          }}>
+                            {task.status}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="pixel-text" style={{ fontSize: '6px', color: '#6a6a8a' }}>{task.agent}</span>
+                          <div className="flex-1 h-1 rounded-full" style={{ backgroundColor: '#ffffff08' }}>
+                            <div
+                              className="h-full rounded-full transition-all"
+                              style={{
+                                width: `${task.progress}%`,
+                                backgroundColor: task.status === 'completed' ? '#00ff88' : task.status === 'active' ? '#ffaa00' : '#6a6a8a',
+                              }}
+                            />
+                          </div>
+                          <span className="pixel-text" style={{ fontSize: '6px', color: '#6a6a8a' }}>{task.progress}%</span>
+                        </div>
                       </div>
-                      <span className="pixel-text" style={{ fontSize: '6px', color: '#6a6a8a' }}>{task.progress}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Activity Feed */}
+              <div className="border rounded-md p-3 flex-1" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
+                <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
+                  ▸ ACTIVITY FEED
+                </div>
+                <div className="space-y-1">
+                  {activityLog.map(entry => (
+                    <div key={entry.id} className="flex gap-2 pixel-text" style={{ fontSize: '7px', animation: 'slide-in 0.3s ease-out' }}>
+                      <span style={{ color: '#6a6a8a', flexShrink: 0 }}>{entry.time}</span>
+                      <span style={{ color: entry.color, flexShrink: 0, minWidth: '36px' }}>{entry.agent}</span>
+                      <span style={{ color: '#e0e0f080' }}>{entry.msg}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right column — System */}
+            <div className="col-span-3 flex flex-col gap-4">
+              {/* System Health */}
+              <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
+                <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
+                  ▸ SYSTEM HEALTH
+                </div>
+                {[
+                  { label: 'CPU', value: 34, color: '#00f0ff' },
+                  { label: 'MEMORY', value: 44, color: '#00ff88' },
+                  { label: 'DISK', value: 2, color: '#ffaa00' },
+                  { label: 'NETWORK', value: 18, color: '#ff00aa' },
+                ].map(m => (
+                  <div key={m.label} className="mb-2">
+                    <div className="flex justify-between pixel-text" style={{ fontSize: '7px' }}>
+                      <span style={{ color: m.color }}>{m.label}</span>
+                      <span style={{ color: m.color + 'aa' }}>{m.value}%</span>
+                    </div>
+                    <div className="h-1 rounded-full mt-[2px]" style={{ backgroundColor: '#ffffff08' }}>
+                      <div className="h-full rounded-full" style={{ width: `${m.value}%`, backgroundColor: m.color }} />
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Activity Feed */}
-          <div className="border rounded-md p-3 flex-1" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
-            <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
-              ▸ ACTIVITY FEED
-            </div>
-            <div className="space-y-1">
-              {activityLog.map(entry => (
-                <div key={entry.id} className="flex gap-2 pixel-text" style={{ fontSize: '7px', animation: 'slide-in 0.3s ease-out' }}>
-                  <span style={{ color: '#6a6a8a', flexShrink: 0 }}>{entry.time}</span>
-                  <span style={{ color: entry.color, flexShrink: 0, minWidth: '36px' }}>{entry.agent}</span>
-                  <span style={{ color: '#e0e0f080' }}>{entry.msg}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Right column — System */}
-        <div className="col-span-3 flex flex-col gap-4">
-          {/* System Health */}
-          <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
-            <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
-              ▸ SYSTEM HEALTH
-            </div>
-            {[
-              { label: 'CPU', value: 34, color: '#00f0ff' },
-              { label: 'MEMORY', value: 44, color: '#00ff88' },
-              { label: 'DISK', value: 2, color: '#ffaa00' },
-              { label: 'NETWORK', value: 18, color: '#ff00aa' },
-            ].map(m => (
-              <div key={m.label} className="mb-2">
-                <div className="flex justify-between pixel-text" style={{ fontSize: '7px' }}>
-                  <span style={{ color: m.color }}>{m.label}</span>
-                  <span style={{ color: m.color + 'aa' }}>{m.value}%</span>
-                </div>
-                <div className="h-1 rounded-full mt-[2px]" style={{ backgroundColor: '#ffffff08' }}>
-                  <div className="h-full rounded-full" style={{ width: `${m.value}%`, backgroundColor: m.color, boxShadow: `0 0 4px ${m.color}40` }} />
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* Provider Status */}
-          <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
-            <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
-              ▸ PROVIDERS
-            </div>
-            {[
-              { name: 'Anthropic', status: 'connected', color: '#00ff88' },
-              { name: 'xAI', status: 'connected', color: '#00ff88' },
-              { name: 'NVIDIA', status: 'connected', color: '#00ff88' },
-            ].map(p => (
-              <div key={p.name} className="flex items-center justify-between mb-1">
-                <span className="pixel-text" style={{ fontSize: '8px', color: '#e0e0f0' }}>{p.name}</span>
-                <div className="flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />
-                  <span className="pixel-text" style={{ fontSize: '6px', color: p.color }}>{p.status}</span>
+              {/* Provider Status */}
+              <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
+                <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
+                  ▸ PROVIDERS
                 </div>
+                {[
+                  { name: 'Anthropic', status: 'connected', color: '#00ff88' },
+                  { name: 'xAI', status: 'connected', color: '#00ff88' },
+                  { name: 'NVIDIA', status: 'connected', color: '#00ff88' },
+                ].map(p => (
+                  <div key={p.name} className="flex items-center justify-between mb-1">
+                    <span className="pixel-text" style={{ fontSize: '8px', color: '#e0e0f0' }}>{p.name}</span>
+                    <div className="flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />
+                      <span className="pixel-text" style={{ fontSize: '6px', color: p.color }}>{p.status}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* Quick Actions */}
-          <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
-            <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
-              ▸ QUICK ACTIONS
+              {/* Quick Actions */}
+              <div className="border rounded-md p-3" style={{ backgroundColor: '#131629', borderColor: '#00f0ff15' }}>
+                <div className="pixel-text mb-3 pb-2 border-b" style={{ fontSize: '9px', color: '#6a6a8a', borderColor: '#ffffff10' }}>
+                  ▸ QUICK ACTIONS
+                </div>
+                {['Deploy Squad', 'Run Diagnostics', 'Open Visualizer', 'View Logs'].map(action => (
+                  <button
+                    key={action}
+                    className="w-full mb-1 py-1.5 px-2 rounded pixel-text text-left border transition-colors hover:bg-white/5"
+                    style={{ fontSize: '8px', color: '#00f0ff', borderColor: '#00f0ff20', backgroundColor: 'transparent' }}
+                  >
+                    {'>'} {action}
+                  </button>
+                ))}
+              </div>
             </div>
-            {['Deploy Squad', 'Run Diagnostics', 'Open Visualizer', 'View Logs'].map(action => (
-              <button
-                key={action}
-                className="w-full mb-1 py-1.5 px-2 rounded pixel-text text-left border transition-colors hover:bg-white/5"
-                style={{ fontSize: '8px', color: '#00f0ff', borderColor: '#00f0ff20', backgroundColor: 'transparent' }}
-              >
-                {'>'} {action}
-              </button>
-            ))}
           </div>
         </div>
       </div>

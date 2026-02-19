@@ -136,18 +136,18 @@ export function CoffeeStation({ top, left }: { top: string; left: string }) {
   );
 }
 
-export function Window({ top, left, width = 40 }: { top: string; left: string; width?: number }) {
+export function Window({ top, left, width: windowWidth = 40 }: { top: string; left: string; width?: number }) {
   return (
     <div
       className="absolute pointer-events-none"
       style={{
         top,
         left,
-        width: width + 'px',
-        height: '60px',
-        backgroundColor: '#0a0e3a',
-        border: '2px solid #1a1f3a',
-        borderRadius: '2px',
+        width: windowWidth,
+        height: 60,
+        backgroundColor: "#0a0e3a",
+        border: "2px solid #1a1f3a",
+        borderRadius: "2px",
         opacity: 0.8,
       }}
     >
@@ -155,30 +155,30 @@ export function Window({ top, left, width = 40 }: { top: string; left: string; w
         className="absolute"
         style={{
           top: 0,
-          left: '50%',
-          width: '2px',
-          height: '100%',
-          backgroundColor: '#1a1f3a',
+          left: "50%",
+          width: "2px",
+          height: "100%",
+          backgroundColor: "#1a1f3a",
         }}
       />
       <div
         className="absolute"
         style={{
-          top: '50%',
+          top: "50%",
           left: 0,
-          width: '100%',
-          height: '2px',
-          backgroundColor: '#1a1f3a',
+          width: "100%",
+          height: "2px",
+          backgroundColor: "#1a1f3a",
         }}
       />
       <div
         className="absolute rounded-full"
         style={{
-          top: '30%',
-          left: '70%',
-          width: '2px',
-          height: '2px',
-          backgroundColor: '#ffffff',
+          top: "30%",
+          left: "70%",
+          width: "2px",
+          height: "2px",
+          backgroundColor: "#ffffff",
           opacity: 0.6,
         }}
       />
