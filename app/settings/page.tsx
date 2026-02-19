@@ -4,35 +4,19 @@ import Link from 'next/link';
 
 export default function SettingsPage() {
   return (
-    <div className="min-h-screen p-8 flex flex-col items-center justify-center bg-gradient-to-b from-[#0a0e1a] to-[#131629] text-center">
-      <div className="mb-8">
-        <div className="pixel-text glow-cyan mb-4" style={{ fontSize: '32px', letterSpacing: '0.1em' }}>
-          ⚙️ SETTINGS
-        </div>
-        <div className="w-24 h-24 mx-auto mb-6 rounded-full border-4 border-[#00f0ff40]" 
-             style={{ background: 'radial-gradient(circle, #00f0ff20 0%, #131629 70%)' }}>
-          <div className="pixel-text glow-yellow absolute inset-0 flex items-center justify-center m-auto w-full h-full" 
-               style={{ fontSize: '48px' }}>🚧</div>
-        </div>
-        <div className="max-w-lg mx-auto">
-          <h1 className="pixel-text glow-yellow mb-6" style={{ fontSize: '18px' }}>COMING SOON — FEATURE IN PROGRESS</h1>
-          <p className="pixel-text mb-8" style={{ fontSize: '11px', lineHeight: '1.4', color: '#e0e0f0' }}>
+    <div className="min-h-screen p-4" style={{ backgroundColor: '#0a0e1a' }}>
+      <div className="max-w-4xl mx-auto">
+        <div className="border rounded-md p-6" style={{ backgroundColor: '#131629', borderColor: '#00f0ff20' }}>
+          <h1 className="pixel-text mb-4" style={{ fontSize: '20px', color: '#00f0ff' }}>⚙️ SETTINGS</h1>
+          <div className="pixel-text mb-6" style={{ fontSize: '14px', color: '#6a6a8a' }}>COMING SOON — FEATURE IN PROGRESS</div>
+          <p className="pixel-text mb-8" style={{ fontSize: '10px', color: '#e0e0f0' }}>
             Alerts, theme, DB settings. Configure notifications, dark mode, backups.
           </p>
+          <Link href="/" className="pixel-text px-4 py-2 border rounded transition-colors hover:bg-white/5" style={{ fontSize: '9px', color: '#00f0ff', borderColor: '#00f0ff40' }}>
+            ← BACK TO DASHBOARD
+          </Link>
         </div>
       </div>
-      <Link 
-        href="/" 
-        className="pixel-text inline-block glow-cyan px-8 py-3 border-2 rounded-lg transition-all hover:scale-105"
-        style={{ 
-          fontSize: '12px', 
-          borderColor: '#00f0ff', 
-          backgroundColor: '#00f0ff10',
-          boxShadow: '0 0 12px #00f0ff30'
-        }}
-      >
-        ← BACK TO DASHBOARD
-      </Link>
     </div>
   );
 }

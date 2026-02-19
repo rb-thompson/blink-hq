@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import AgentPanel from '../../components/AgentPanel';
+import RestartButton from '../../components/RestartButton';
 
 interface SubAgent {
   id: string;
@@ -25,11 +27,13 @@ function WorkstationSlot({
   y,
   agent,
   color,
+  onClick,
 }: {
   x: number;
   y: number;
   agent?: SubAgent;
   color: string;
+  onClick: () => void;
 }) {
   const active = !!agent;
   const dimColor = '#2a2f4a';
@@ -38,7 +42,7 @@ function WorkstationSlot({
   const glow = active ? `drop-shadow(0 0 8px ${color}80)` : 'none';
 
   return (
-    <g transform={`translate(${x}, ${y})`} style={{ filter: glow }}>
+    <g transform={`translate(${x}, ${y})`} style={{ filter: glow, cursor: active ? 'pointer' : 'default' }} onClick={onClick}>
       {/* Desk */}
       <rect x={-65} y={-10} width={130} height={100} rx={4} fill={bg} stroke={border} strokeWidth={active ? 1.5 : 1} />
       {/* Monitor base */}
@@ -145,6 +149,7 @@ export default function Visualizer() {
   const [subAgents, setSubAgents] = useState<SubAgent[]>([]);
   const [sessionActive, setSessionActive] = useState(true);
   const [time, setTime] = useState('--:--:--');
+  const [selectedAgent, setSelectedAgent] = useState<SubAgent | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -236,6 +241,7 @@ export default function Visualizer() {
               y={pos.y}
               agent={subAgents[i]}
               color={NEON_COLORS[i % NEON_COLORS.length]}
+              onClick={() => setSelectedAgent(subAgents[i] || null)}
             />
           ))}
 
@@ -247,6 +253,9 @@ export default function Visualizer() {
           ))}
         </svg>
       </div>
+
+      {/* Agent Panel */}
+      <AgentPanel agent={selectedAgent} onClose={() => setSelectedAgent(null)} />
 
       {/* Status bar */}
       <div style={{
@@ -274,6 +283,7 @@ export default function Visualizer() {
           <span style={{ color: '#6a6a8a' }}>SLOTS AVAILABLE: </span>
           <span style={{ color: '#ffaa00' }}>{Math.max(0, 6 - subAgents.length)}</span>
         </div>
+        <RestartButton />
         <div className="flex-1" />
         <div className="pixel-text" style={{ fontSize: '7px', color: '#6a6a8a' }}>
           {time}

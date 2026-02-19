@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import RestartButton from '../../components/RestartButton';
 
 interface Agent {
   id: string;
@@ -176,6 +177,7 @@ function EditModal({
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
+  const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<(Partial<Agent> & { id?: string }) | null>(null);
   const [saving, setSaving] = useState(false);
@@ -186,6 +188,11 @@ export default function AgentsPage() {
       .then(r => r.json())
       .then(data => { setAgents(data); setLoading(false); })
       .catch(() => setLoading(false));
+
+    fetch('/api/agent-stats')
+      .then(r => r.json())
+      .then(setStats)
+      .catch(() => {});
   }, []);
 
   const saveAgents = async (updated: Agent[]) => {
@@ -242,6 +249,7 @@ export default function AgentsPage() {
                 SAVING...
               </span>
             )}
+            <RestartButton />
             <button
               onClick={() => setEditing(BLANK_AGENT)}
               className="pixel-text px-3 py-2 rounded border transition-colors hover:bg-white/5"

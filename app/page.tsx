@@ -1,8 +1,11 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import sparkline from '@fnando/sparkline';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js';
 import RestartButton from '../components/RestartButton';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
 
 interface Session {
   id: string;
@@ -94,6 +97,10 @@ export default function Dashboard() {
         const sessArray: Session[] = Array.isArray(sessData) ? sessData : (sessData?.sessions ?? []);
         setSessions(sessArray);
         setGatewayOk(true);
+      } else {
+        setGatewayOk(false);
+        console.warn('OpenClaw sessions fetch failed — start OpenClaw gateway?');
+      }
 
         // Fetch recent messages from primary session's transcript
         const primarySession = sessArray[0];
@@ -111,8 +118,9 @@ export default function Dashboard() {
       } else {
         setGatewayOk(false);
       }
-    } catch {
+    } catch (e) {
       setGatewayOk(false);
+      console.warn('OpenClaw offline — data will show 0. Run: openclaw gateway start', e);
     }
 
     try {
@@ -126,8 +134,12 @@ export default function Dashboard() {
         const saData = await saRes.json();
         const agentsArray: SubAgent[] = Array.isArray(saData) ? saData : (saData?.agents ?? saData?.subagents ?? []);
         setSubAgents(agentsArray);
+      } else {
+        console.warn('OpenClaw subagents fetch failed');
       }
-    } catch { /* ignore */ }
+    } catch (e) {
+      console.warn('OpenClaw subagents error', e);
+    }
 
     try {
       // Fetch session status
@@ -273,6 +285,7 @@ export default function Dashboard() {
             <div className="pixel-text" style={{ fontSize: '6px', color: '#6a6a8a' }}>
               127.0.0.1:18789
             </div>
+            <RestartButton />
           </div>
         </div>
 
@@ -353,20 +366,46 @@ export default function Dashboard() {
               ▸ SYSTEM HEALTH
             </div>
             {[
-              { label: 'CPU', value: systemStats?.current.cpu.avg ?? 0, color: '#00f0ff', spark: historyData.cpu.slice().reverse() },
-              { label: 'MEMORY', value: systemStats?.current.ram.pct ?? 0, color: '#00ff88', spark: historyData.ram_pct.slice().reverse() },
+              { label: 'CPU', value: systemStats?.current?.cpu?.avg ?? 0, color: '#00f0ff', spark: historyData.cpu.slice().reverse() },
+              { label: 'MEMORY', value: systemStats?.current?.ram?.pct ?? 0, color: '#00ff88', spark: historyData.ram_pct.slice().reverse() },
             ].map(m => (
               <div key={m.label} className="mb-3">
                 <div className="flex justify-between pixel-text mb-1" style={{ fontSize: '7px' }}>
                   <span style={{ color: m.color }}>{m.label}</span>
                   <span style={{ color: m.color + 'aa' }}>{m.value}%</span>
                 </div>
-                <div className="h-1.5 rounded-full" style={{ backgroundColor: '#ffffff08' }}>
+                <div className="h-1.5 rounded-full mb-1" style={{ backgroundColor: '#ffffff08' }}>
                   <div className="h-full rounded-full transition-all" style={{
                     width: `${m.value}%`,
                     backgroundColor: m.value > 80 ? '#ff00aa' : m.color,
                     boxShadow: `0 0 4px ${m.color}40`,
                   }} />
+                </div>
+                <div className="flex justify-between items-center mt-1 opacity-75">
+                  <span className="pixel-text" style={{ fontSize: '6px', color: '#6a6a8a' }}>spark (20pts)</span>
+                  <div style={{ width: '60px', height: '12px' }}>
+                    <Line
+                      data={{
+                        labels: new Array(m.spark.length).fill(''),
+                        datasets: [{
+                          data: m.spark,
+                          borderColor: '#00ff00',
+                          borderWidth: 1,
+                          pointRadius: 0,
+                          tension: 0.1
+                        }]
+                      }}
+                      options={{
+                        responsive: false,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        scales: { x: { display: false }, y: { display: false } },
+                        elements: { point: { radius: 0 } }
+                      }}
+                      height={12}
+                      width={60}
+                    />
+                  </div>
                 </div>
               </div>
             ))}

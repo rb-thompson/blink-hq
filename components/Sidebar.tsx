@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -101,18 +101,28 @@ const navItems = [
 
 export default function Sidebar() {
   const [expanded, setExpanded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <div
-      className="fixed left-0 top-0 bottom-0 z-50 flex flex-col border-r transition-all duration-300 ease-out"
+      className={`fixed left-0 top-0 bottom-0 z-50 flex flex-col border-r transition-all duration-300 ease-out ${
+        isMobile ? (expanded ? 'translate-x-0' : '-translate-x-full') : ''
+      }`}
       style={{
-        width: expanded ? '160px' : '48px',
+        width: expanded ? '160px' : isMobile ? '0' : '48px',
         backgroundColor: '#0a0e1aee',
         borderColor: '#131629',
       }}
-      onMouseEnter={() => setExpanded(true)}
-      onMouseLeave={() => setExpanded(false)}
+      onMouseEnter={() => !isMobile && setExpanded(true)}
+      onMouseLeave={() => !isMobile && setExpanded(false)}
     >
       <div className="border-b border-[#131629] py-4 px-3 flex items-center h-14">
         <svg viewBox="0 0 24 24" style={{ width: 24, height: 24, minWidth: 24 }}>
@@ -138,7 +148,7 @@ export default function Sidebar() {
               key={item.id}
               href={item.href}
               className="flex items-center px-3 py-3 mx-2 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: isActive ? '#00f0ff' : '#6a6a8a' }}
+              style={{ color: isActive ? '#00f0ff' : '#6a6a8a', opacity: expanded ? 1 : 0.8 }}
             >
               <item.icon />
               <span
