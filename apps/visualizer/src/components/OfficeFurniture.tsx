@@ -193,7 +193,7 @@ export function CoffeeStation({ top, left }: { top: string; left: string }) {
   );
 }
 
-export function Window({ top, left, width = 40 }: { top: string; left: string; width?: number }) {
+export function WindowComponent({ top, left, width = 40 }: { top: string; left: string; width?: number }) {
   return (
     <div
       className="absolute pointer-events-none"
