@@ -24,6 +24,7 @@ export const AGENTS: Agent[] = [
 
 // Position config for office layout
 export interface Position {
+  transform?: string;
   top: string;
   left?: string;
   right?: string;

@@ -73,14 +73,14 @@ export default function Home() {
               ▸ OPERATIONS FLOOR — DECK 7
             </div>
             
-            <Window top="10%" left="2%" width={60} />
-            <Window top="30%" left="2%" width={60} />
-            <ServerRack top="8%" right="4%" />
-            <CoffeeStation top="65%" right="8%" />
-            <PottedPlant top="50%" left="8%" size="large" />
-            <PottedPlant top="25%" left="22%" size="small" />
-            <PottedPlant top="72%" left="15%" size="small" />
-            <PottedPlant top="15%" right="18%" size="large" />
+            {/* <Window top="10%" left="2%" width={60} /> */}
+            {/* <Window top="30%" left="2%" width={60} /> */}
+            {/* <ServerRack top="8%" right="4%" /> */}
+            {/* <CoffeeStation top="65%" right="8%" /> */}
+            {/* <PottedPlant top="50%" left="8%" size="large" /> */}
+            {/* <PottedPlant top="25%" left="22%" size="small" /> */}
+            {/* <PottedPlant top="72%" left="15%" size="small" /> */}
+            {/* <PottedPlant top="15%" right="18%" size="large" /> */}
             
             {/* Atlas - bottom center */}
             <div className="absolute" style={{ bottom: '8%', left: '50%', transform: 'translateX(-50%)' }}>
