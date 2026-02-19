@@ -24,32 +24,6 @@ body {
   overflow: hidden;
 }
 
-/* Scanline overlay */
-.scanlines::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 100;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, var(--scanline-opacity)) 2px,
-    rgba(0, 0, 0, var(--scanline-opacity)) 4px
-  );
-}
-
-/* CRT vignette */
-.crt-vignette::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 99;
-  background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
-}
-
 /* Pixel font simulation */
 .pixel-text {
   font-family: 'Courier New', monospace;
@@ -62,9 +36,9 @@ body {
 
 /* Glow effects */
 .glow-cyan { text-shadow: 0 0 6px var(--cyan), 0 0 12px var(--cyan); color: var(--cyan); }
-.glow-magenta { text-shadow: 0 0 6px var(--magenta), 0 0 12px var(--magenta); color: var(--magenta); }
 .glow-green { text-shadow: 0 0 6px var(--green), 0 0 12px var(--green); color: var(--green); }
 .glow-amber { text-shadow: 0 0 6px var(--amber), 0 0 12px var(--amber); color: var(--amber); }
+.glow-magenta { text-shadow: 0 0 6px var(--magenta), 0 0 12px var(--magenta); color: var(--magenta); }
 
 /* Status pulse animations */
 @keyframes pulse-active {
@@ -82,45 +56,32 @@ body {
   51%, 100% { opacity: 0; }
 }
 
-@keyframes scroll-text {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-50%); }
+/* Glitch effects for workstation screens */
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  10% { transform: translate(-2px, 2px); }
+  20% { transform: translate(-2px, -2px); }
+  30% { transform: translate(2px, 2px); }
+  40% { transform: translate(2px, -2px); }
+  50% { transform: translate(-2px, 2px); }
+  60% { transform: translate(-2px, -2px); }
+  70% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  90% { transform: translate(-2px, 2px); }
 }
 
-@keyframes float-particle {
-  0% { transform: translateY(0) translateX(0); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
+@keyframes glitch-shift {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-1px); }
+  50% { transform: translateX(1px); }
+  75% { transform: translateX(-1px); }
 }
 
-@keyframes data-stream {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes checkmark-float {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-20px) scale(0.5); opacity: 0; }
-}
-
-@keyframes status-bar-scroll {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
-
-@keyframes flicker {
-  0%, 97%, 100% { opacity: 1; }
-  98% { opacity: 0.85; }
-  99% { opacity: 0.95; }
-}
-
-.animate-flicker {
-  animation: flicker 4s infinite;
-}
-
-/* Ambient stars */
-@keyframes twinkle {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.8; }
+.animate-pulse {
+  animation: pulse-active 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

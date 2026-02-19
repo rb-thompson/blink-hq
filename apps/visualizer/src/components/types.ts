@@ -24,6 +24,13 @@ export const AGENTS: Agent[] = [
   { name: 'Atlas', role: 'LongContext', status: 'idle', color: AGENT_COLORS.Atlas, task: 'Standing by', model: 'nvidia/moonshotai/kimi-k2.5', position: 'coffee', workType: 'none' },
 ];
 
+// Initial positions around coffee station (evenly spaced in a circle)
+export const COFFEE_POSITIONS = {
+  Scout: { x: 12, y: 35 },   // Top-left
+  Atlas: { x: 18, y: 65 },   // Bottom-left
+  Echo: { x: 12, y: 50 },    // Left-center (but will be at completed)
+};
+
 // Work zone positions (within the workstation grid area on the right)
 export const WORK_ZONES = {
   // Top row workstations
@@ -43,7 +50,7 @@ export const WORK_ZONES = {
   Atlas: { x: 75, y: 80 },   // Bottom-right workstation
 };
 
-// Coffee station (standby area)
+// Coffee station center
 export const COFFEE_STATION = { x: 15, y: 50 };
 
 // Completed area
