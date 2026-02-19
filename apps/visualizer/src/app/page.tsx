@@ -1,97 +1,154 @@
+'use client';
+
+import { useState } from 'react';
+import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import Workstation from '@/components/Workstation';
 import StatusBar from '@/components/StatusBar';
 import AmbientParticles from '@/components/AmbientParticles';
 import StarField from '@/components/StarField';
-import ActivityLog from '@/components/ActivityLog';
-import SystemStats from '@/components/SystemStats';
-import { AGENTS } from '@/components/types';
+import LegendPanel from '@/components/LegendPanel';
+import { AGENTS, Agent } from '@/components/types';
+import { PottedPlant, ServerRack, CoffeeStation, Window } from '@/components/OfficeFurniture';
+
+function Tooltip({ agent, visible, x, y }: { agent: Agent | null; visible: boolean; x: number; y: number }) {
+  if (!visible || !agent) return null;
+  
+  return (
+    <div
+      className="fixed z-50 p-3 rounded border pointer-events-none"
+      style={{
+        left: x,
+        top: y,
+        backgroundColor: '#131629ee',
+        borderColor: agent.color + '40',
+        boxShadow: `0 0 20px ${agent.color}20`,
+        transform: 'translate(-50%, -100%) translateY(-10px)',
+      }}
+    >
+      <div className="pixel-text" style={{ fontSize: '10px', color: agent.color, marginBottom: '4px' }}>{agent.name}</div>
+      <div className="pixel-text" style={{ fontSize: '8px', color: '#6a6a8a', marginBottom: '2px' }}>{agent.role}</div>
+      <div className="pixel-text" style={{ fontSize: '7px', color: '#e0e0f080' }}>{agent.model}</div>
+      <div className="pixel-text mt-2" style={{ fontSize: '7px', color: agent.color + 'aa' }}>▸ {agent.task}</div>
+      <div className="mt-1">
+        <span className="pixel-text px-1 rounded" style={{ fontSize: '6px', backgroundColor: agent.status === 'active' ? '#00ff8820' : agent.status === 'idle' ? '#6a6a8a20' : agent.status === 'thinking' ? '#ffaa0020' : '#00f0ff20', color: agent.status === 'active' ? '#00ff88' : agent.status === 'idle' ? '#6a6a8a' : agent.status === 'thinking' ? '#ffaa00' : '#00f0ff' }}>
+          {agent.status.toUpperCase()}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
-  // Layout: Blink center top, others arranged around
-  const topRow = AGENTS.filter(a => ['Volt', 'Blink', 'Pixel'].includes(a.name));
-  const midRow = AGENTS.filter(a => ['Scout', 'Spark', 'Cipher', 'Echo'].includes(a.name));
-  const botAgent = AGENTS.filter(a => a.name === 'Atlas');
+  const [tooltip, setTooltip] = useState<{ agent: Agent | null; visible: boolean; x: number; y: number }>({ agent: null, visible: false, x: 0, y: 0 });
 
-  // Ensure correct order
-  const topOrdered = [
-    AGENTS.find(a => a.name === 'Volt')!,
-    AGENTS.find(a => a.name === 'Blink')!,
-    AGENTS.find(a => a.name === 'Pixel')!,
-  ];
-  const midOrdered = [
-    AGENTS.find(a => a.name === 'Scout')!,
-    AGENTS.find(a => a.name === 'Spark')!,
-    AGENTS.find(a => a.name === 'Cipher')!,
-    AGENTS.find(a => a.name === 'Echo')!,
-  ];
+  const handleAgentHover = (agent: Agent, e: React.MouseEvent) => {
+    setTooltip({ agent, visible: true, x: e.clientX, y: e.clientY });
+  };
+
+  const handleAgentMove = (e: React.MouseEvent) => {
+    setTooltip(prev => prev.visible ? { ...prev, x: e.clientX, y: e.clientY } : prev);
+  };
+
+  const handleAgentLeave = () => {
+    setTooltip({ agent: null, visible: false, x: 0, y: 0 });
+  };
 
   return (
-    <div className="scanlines crt-vignette min-h-screen relative">
-      {/* Background layers */}
+    <div className="scanlines crt-vignette min-h-screen relative" onMouseMove={handleAgentMove}>
+      <Tooltip {...tooltip} />
       <StarField />
       <AmbientParticles />
-
-      {/* Main content */}
-      <div className="relative z-10 flex flex-col min-h-screen pb-8">
+      <Sidebar />
+      
+      <div className="relative z-10 min-h-screen flex flex-col pl-16 pb-8">
         <Header />
-
-        {/* Office floor layout */}
-        <div className="flex-1 flex flex-col items-center justify-center gap-2 px-4">
-          {/* Room border */}
+        
+        <div className="flex-1 flex flex-col items-center justify-start pt-4 px-4">
           <div
-            className="relative border rounded-lg p-4 max-w-5xl w-full"
-            style={{
-              backgroundColor: '#131629aa',
-              borderColor: '#00f0ff10',
-              backdropFilter: 'blur(4px)',
-            }}
+            className="relative w-full max-w-6xl min-h-[600px] border rounded-lg"
+            style={{ backgroundColor: '#13162960', borderColor: '#00f0ff10', backdropFilter: 'blur(4px)' }}
           >
-            {/* Room label */}
             <div className="absolute -top-3 left-4 px-2 pixel-text" style={{ fontSize: '8px', color: '#6a6a8a', backgroundColor: '#131629' }}>
               ▸ OPERATIONS FLOOR — DECK 7
             </div>
-
-            {/* Top row: Volt - BLINK - Pixel */}
-            <div className="flex justify-center gap-4 mb-2">
-              {topOrdered.map(agent => (
-                <Workstation key={agent.name} agent={agent} />
-              ))}
+            
+            <Window top="10%" left="2%" width={60} />
+            <Window top="30%" left="2%" width={60} />
+            <ServerRack top="8%" right="4%" />
+            <CoffeeStation top="65%" right="8%" />
+            <PottedPlant top="50%" left="8%" size="large" />
+            <PottedPlant top="25%" left="22%" size="small" />
+            <PottedPlant top="72%" left="15%" size="small" />
+            <PottedPlant top="15%" right="18%" size="large" />
+            
+            {/* Atlas - bottom center */}
+            <div className="absolute" style={{ bottom: '8%', left: '50%', transform: 'translateX(-50%)' }}>
+              <div onMouseEnter={(e) => handleAgentHover(AGENTS.find(a => a.name === 'Atlas')!, e)} onMouseLeave={handleAgentLeave}>
+                <Workstation agent={AGENTS.find(a => a.name === 'Atlas')!} variant="atlas" />
+              </div>
             </div>
-
-            {/* Decorative floor line */}
-            <div className="flex items-center justify-center gap-2 my-1">
-              <div className="h-[1px] flex-1" style={{ background: 'linear-gradient(90deg, transparent, #00f0ff10, transparent)' }} />
+            
+            {/* Echo - center */}
+            <div className="absolute" style={{ top: '58%', left: '50%', transform: 'translateX(-50%)' }}>
+              <div onMouseEnter={(e) => handleAgentHover(AGENTS.find(a => a.name === 'Echo')!, e)} onMouseLeave={handleAgentLeave}>
+                <Workstation agent={AGENTS.find(a => a.name === 'Echo')!} variant="echo" />
+              </div>
             </div>
-
-            {/* Mid row: Scout - Spark - Cipher - Echo */}
-            <div className="flex justify-center gap-3">
-              {midOrdered.map(agent => (
-                <Workstation key={agent.name} agent={agent} />
-              ))}
+            
+            {/* Spark - middle left */}
+            <div className="absolute" style={{ top: '55%', left: '25%' }}>
+              <div onMouseEnter={(e) => handleAgentHover(AGENTS.find(a => a.name === 'Spark')!, e)} onMouseLeave={handleAgentLeave}>
+                <Workstation agent={AGENTS.find(a => a.name === 'Spark')!} variant="spark" />
+              </div>
             </div>
-
-            {/* Floor line */}
-            <div className="flex items-center justify-center gap-2 my-1">
-              <div className="h-[1px] flex-1" style={{ background: 'linear-gradient(90deg, transparent, #00f0ff10, transparent)' }} />
+            
+            {/* Cipher - middle right */}
+            <div className="absolute" style={{ top: '55%', right: '25%' }}>
+              <div onMouseEnter={(e) => handleAgentHover(AGENTS.find(a => a.name === 'Cipher')!, e)} onMouseLeave={handleAgentLeave}>
+                <Workstation agent={AGENTS.find(a => a.name === 'Cipher')!} variant="cipher" />
+              </div>
             </div>
-
-            {/* Bottom: Atlas (wide desk) */}
-            <div className="flex justify-center">
-              {botAgent.map(agent => (
-                <Workstation key={agent.name} agent={agent} />
-              ))}
+            
+            {/* Scout - by windows */}
+            <div className="absolute" style={{ top: '40%', left: '8%' }}>
+              <div onMouseEnter={(e) => handleAgentHover(AGENTS.find(a => a.name === 'Scout')!, e)} onMouseLeave={handleAgentLeave}>
+                <Workstation agent={AGENTS.find(a => a.name === 'Scout')!} variant="scout" />
+              </div>
+            </div>
+            
+            {/* Blink - top center */}
+            <div className="absolute" style={{ top: '15%', left: '50%', transform: 'translateX(-50%)' }}>
+              <div onMouseEnter={(e) => handleAgentHover(AGENTS.find(a => a.name === 'Blink')!, e)} onMouseLeave={handleAgentLeave}>
+                <Workstation agent={AGENTS.find(a => a.name === 'Blink')!} variant="command" />
+              </div>
+            </div>
+            
+            {/* Volt - top left */}
+            <div className="absolute" style={{ top: '22%', left: '20%' }}>
+              <div onMouseEnter={(e) => handleAgentHover(AGENTS.find(a => a.name === 'Volt')!, e)} onMouseLeave={handleAgentLeave}>
+                <Workstation agent={AGENTS.find(a => a.name === 'Volt')!} variant="volt" />
+              </div>
+            </div>
+            
+            {/* Pixel - top right */}
+            <div className="absolute" style={{ top: '22%', right: '20%' }}>
+              <div onMouseEnter={(e) => handleAgentHover(AGENTS.find(a => a.name === 'Pixel')!, e)} onMouseLeave={handleAgentLeave}>
+                <Workstation agent={AGENTS.find(a => a.name === 'Pixel')!} variant="pixel" />
+              </div>
+            </div>
+            
+            <div className="absolute bottom-2 left-4 pixel-text" style={{ fontSize: '6px', color: '#6a6a8a' }}>
+              ██████▓▓▓██████▓▓▓██████
             </div>
           </div>
-
-          {/* Side panels */}
-          <div className="max-w-5xl w-full grid grid-cols-2 gap-3 mt-2">
-            <ActivityLog />
-            <SystemStats />
+          
+          <div className="mt-4 w-full max-w-6xl">
+            <LegendPanel />
           </div>
         </div>
       </div>
-
+      
       <StatusBar />
     </div>
   );
