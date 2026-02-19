@@ -1,3 +1,16 @@
+import { AGENT_COLORS } from './palette';
+
+export interface Agent {
+  name: string;
+  role: string;
+  status: string;
+  color: string;
+  task: string;
+  model: string;
+  position: string;
+  workType: string;
+}
+
 export const AGENTS: Agent[] = [
   { name: 'Blink', role: 'Commander', status: 'idle', color: AGENT_COLORS.Blink, task: 'Standing by', model: 'anthropic/claude-opus-4-6', position: 'coffee', workType: 'none' },
   { name: 'Spark', role: 'Coder', status: 'idle', color: AGENT_COLORS.Spark, task: 'Standing by', model: 'anthropic/claude-sonnet-4-6', position: 'coffee', workType: 'none' },

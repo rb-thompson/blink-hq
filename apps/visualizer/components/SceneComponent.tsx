@@ -101,25 +101,23 @@
         </div>
       </div>
 
-      {/* Agents at coffee station */}
+      {/* Floating agents */}
       {AGENTS.map(agent => {
-        if (workstationAgents.has(agent.name)) return null; // Skip agents at workstations
+        const position = agentPositions[agent.name];
+        if (!position || position.isAtWorkstation) return null;
 
-        const position = COFFEE_POSITIONS[agent.name as keyof typeof COFFEE_POSITIONS];
-        if (!position) return null;
-
-        const isMoving = movingAgents.has(agent.name);
+        const currentStatus = agentStatuses[agent.name] || 'idle';
 
         return (
           <div
             key={agent.name}
-            className={`absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 transition-all duration-[2500ms] ease-out ${
-              isMoving ? 'opacity-50' : 'opacity-100'
-            }`}
+            className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-[2500ms] ease-out cursor-pointer z-20"
             style={{
-              left: isMoving ? `${WORK_ZONES[agent.name as keyof typeof WORK_ZONES].x}%` : `${position.x}%`,
-              top: isMoving ? `${WORK_ZONES[agent.name as keyof typeof WORK_ZONES].y}%` : `${position.y}%`,
+              left: `${position.x}%`,
+              top: `${position.y}%`,
             }}
+            onMouseEnter={() => setHoveredAgent(agent.name)}
+            onMouseLeave={() => setHoveredAgent(null)}
           >
             <div className="relative">
               {/* Agent avatar */}
@@ -128,14 +126,32 @@
                 style={{
                   backgroundColor: agent.color,
                   borderColor: agent.color + '80',
-                  boxShadow: '0 0 8px ' + agent.color + '40',
+                  boxShadow: currentStatus === 'active' ? `0 0 12px ${agent.color}60` : 'none',
                 }}
               >
                 {agent.name.charAt(0)}
               </div>
 
+              {/* Hover tooltip */}
+              {hoveredAgent === agent.name && (
+                <div
+                  className="absolute top-full mt-2 p-2 rounded font-mono text-xs whitespace-nowrap z-30"
+                  style={{
+                    backgroundColor: '#1a1a2a',
+                    border: `1px solid ${agent.color}40`,
+                    color: '#e0e0e0',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                  }}
+                >
+                  <div style={{ color: agent.color }}>{agent.name}</div>
+                  <div className="text-slate-400">{agent.role}</div>
+                  <div className="text-xs mt-1">Status: {currentStatus.toUpperCase()}</div>
+                </div>
+              )}
+
               {/* Movement trail */}
-              {isMoving && (
+              {position.isMoving && (
                 <div
                   className="absolute inset-0 rounded-full animate-ping opacity-50"
                   style={{
@@ -151,19 +167,17 @@
 
       {/* Agents at workstations */}
       {AGENTS.map(agent => {
-        if (!workstationAgents.has(agent.name)) return null; // Skip agents not at workstations
+        if (!agentPositions[agent.name]?.isAtWorkstation) return null;
 
         const position = WORK_ZONES[agent.name as keyof typeof WORK_ZONES];
         if (!position) return null;
 
-        const isMoving = movingAgents.has(agent.name);
+        const isMoving = agentPositions[agent.name]?.isMoving;
 
         return (
           <div
             key={`workstation-${agent.name}`}
-            className={`absolute transform -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-[2500ms] ease-out ${
-              isMoving ? 'opacity-50' : 'opacity-100'
-            }`}
+            className="absolute transform -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-[2500ms] ease-out"
             style={{
               left: isMoving ? `${COFFEE_POSITIONS[agent.name as keyof typeof COFFEE_POSITIONS].x}%` : `${position.x}%`,
               top: isMoving ? `${COFFEE_POSITIONS[agent.name as keyof typeof COFFEE_POSITIONS].y}%` : `${position.y}%`,
