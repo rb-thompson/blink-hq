@@ -93,10 +93,7 @@ export default function Dashboard() {
         const sessArray: Session[] = Array.isArray(sessData) ? sessData : (sessData?.sessions ?? []);
         setSessions(sessArray);
         setGatewayOk(true);
-      } else {
-        setGatewayOk(false);
-        console.warn('OpenClaw sessions fetch failed - start OpenClaw gateway?');
-      }
+      // removed else to fix parsing
 
         // Fetch recent messages from primary session's transcript
         const primarySession = sessArray[0];
