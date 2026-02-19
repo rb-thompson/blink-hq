@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import Sparkline from '@fnando/sparkline';
+import sparkline from '@fnando/sparkline';
+import RestartButton from '../components/RestartButton';
 
 interface Session {
   id: string;
@@ -192,19 +193,22 @@ export default function Dashboard() {
       </div>
 
       {/* Top stats bar */}
-      <div className="flex justify-center gap-8 mb-5 flex-wrap">
-        {[
-          { label: 'SESSIONS', value: String(sessions.length), color: '#00f0ff' },
-          { label: 'SUB-AGENTS', value: String(subAgents.length), color: '#00ff88' },
-          { label: 'TOKENS', value: totalTokens > 0 ? `${(totalTokens / 1000).toFixed(1)}K` : '—', color: '#ffaa00' },
-          { label: 'CTX %', value: `${tokenPct}%`, color: tokenPct > 80 ? '#ff00aa' : '#ffaa00' },
-          { label: 'UPTIME', value: systemStats ? formatUptime(systemStats.uptime) : '—', color: '#00f0ff' },
-        ].map(s => (
-          <div key={s.label} className="text-center">
-            <div className="pixel-text" style={{ fontSize: '7px', color: '#6a6a8a' }}>{s.label}</div>
-            <div className="pixel-text" style={{ fontSize: '14px', color: s.color }}>{s.value}</div>
-          </div>
-        ))}
+      <div className="flex justify-between items-center mb-5 flex-wrap">
+        <div className="flex gap-8 flex-wrap">
+          {[
+            { label: 'SESSIONS', value: String(sessions.length), color: '#00f0ff' },
+            { label: 'SUB-AGENTS', value: String(subAgents.length), color: '#00ff88' },
+            { label: 'TOKENS', value: totalTokens > 0 ? `${(totalTokens / 1000).toFixed(1)}K` : '—', color: '#ffaa00' },
+            { label: 'CTX %', value: `${tokenPct}%`, color: tokenPct > 80 ? '#ff00aa' : '#ffaa00' },
+            { label: 'UPTIME', value: systemStats ? formatUptime(systemStats.uptime) : '—', color: '#00f0ff' },
+          ].map(s => (
+            <div key={s.label} className="text-center">
+              <div className="pixel-text" style={{ fontSize: '7px', color: '#6a6a8a' }}>{s.label}</div>
+              <div className="pixel-text" style={{ fontSize: '14px', color: s.color }}>{s.value}</div>
+            </div>
+          ))}
+        </div>
+        <RestartButton className="ml-4" />
       </div>
 
       {/* Main grid */}
@@ -357,24 +361,12 @@ export default function Dashboard() {
                   <span style={{ color: m.color }}>{m.label}</span>
                   <span style={{ color: m.color + 'aa' }}>{m.value}%</span>
                 </div>
-                <div className="h-1.5 rounded-full mb-1" style={{ backgroundColor: '#ffffff08' }}>
+                <div className="h-1.5 rounded-full" style={{ backgroundColor: '#ffffff08' }}>
                   <div className="h-full rounded-full transition-all" style={{
                     width: `${m.value}%`,
                     backgroundColor: m.value > 80 ? '#ff00aa' : m.color,
                     boxShadow: `0 0 4px ${m.color}40`,
                   }} />
-                </div>
-                <div className="flex justify-between items-center mt-1 opacity-75">
-                  <span className="pixel-text" style={{ fontSize: '6px', color: '#6a6a8a' }}>spark (20pts)</span>
-                  <Sparkline
-                    data={m.spark}
-                    width="60"
-                    height="12"
-                    stroke="#00ff00"
-                    strokeWidth="1.2"
-                    fill="transparent"
-                    style={{ filter: 'drop-shadow(0 0 2px #00ff0040)' }}
-                  />
                 </div>
               </div>
             ))}
