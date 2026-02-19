@@ -9,51 +9,35 @@ export interface Agent {
   color: string;
   task: string;
   model: string;
+  position: 'coffee' | 'workstation' | 'completed';
+  workType: 'code' | 'research' | 'analysis' | 'creative' | 'review' | 'data' | 'command' | 'none';
 }
 
 export const AGENTS: Agent[] = [
-  { name: 'Blink', role: 'Commander', status: 'active', color: AGENT_COLORS.Blink, task: 'Orchestrating squad operations', model: 'anthropic/claude-opus-4-6' },
-  { name: 'Spark', role: 'Coder', status: 'active', color: AGENT_COLORS.Spark, task: 'Building visualizer components', model: 'anthropic/claude-sonnet-4-6' },
-  { name: 'Volt', role: 'Reasoner', status: 'thinking', color: AGENT_COLORS.Volt, task: 'Analyzing architecture patterns', model: 'xai/grok-4-1-fast' },
-  { name: 'Pixel', role: 'Creative', status: 'active', color: AGENT_COLORS.Pixel, task: 'Designing UI elements', model: 'anthropic/claude-sonnet-4-6' },
-  { name: 'Scout', role: 'Researcher', status: 'idle', color: AGENT_COLORS.Scout, task: 'Standing by', model: 'xai/grok-4-1-fast' },
-  { name: 'Echo', role: 'Reviewer', status: 'done', color: AGENT_COLORS.Echo, task: 'Code review complete', model: 'anthropic/claude-haiku-4-5' },
-  { name: 'Cipher', role: 'Data', status: 'active', color: AGENT_COLORS.Cipher, task: 'Processing data streams', model: 'xai/grok-code-fast-1' },
-  { name: 'Atlas', role: 'LongContext', status: 'idle', color: AGENT_COLORS.Atlas, task: 'Standing by', model: 'nvidia/moonshotai/kimi-k2.5' },
+  { name: 'Blink', role: 'Commander', status: 'active', color: AGENT_COLORS.Blink, task: 'Orchestrating squad operations', model: 'anthropic/claude-opus-4-6', position: 'workstation', workType: 'command' },
+  { name: 'Spark', role: 'Coder', status: 'active', color: AGENT_COLORS.Spark, task: 'Building visualizer components', model: 'anthropic/claude-sonnet-4-6', position: 'workstation', workType: 'code' },
+  { name: 'Volt', role: 'Reasoner', status: 'thinking', color: AGENT_COLORS.Volt, task: 'Analyzing architecture patterns', model: 'xai/grok-4-1-fast', position: 'workstation', workType: 'analysis' },
+  { name: 'Pixel', role: 'Creative', status: 'active', color: AGENT_COLORS.Pixel, task: 'Designing UI elements', model: 'anthropic/claude-sonnet-4-6', position: 'workstation', workType: 'creative' },
+  { name: 'Scout', role: 'Researcher', status: 'idle', color: AGENT_COLORS.Scout, task: 'Standing by', model: 'xai/grok-4-1-fast', position: 'coffee', workType: 'none' },
+  { name: 'Echo', role: 'Reviewer', status: 'done', color: AGENT_COLORS.Echo, task: 'Code review complete', model: 'anthropic/claude-haiku-4-5', position: 'completed', workType: 'none' },
+  { name: 'Cipher', role: 'Data', status: 'active', color: AGENT_COLORS.Cipher, task: 'Processing data streams', model: 'xai/grok-code-fast-1', position: 'workstation', workType: 'data' },
+  { name: 'Atlas', role: 'LongContext', status: 'idle', color: AGENT_COLORS.Atlas, task: 'Standing by', model: 'nvidia/moonshotai/kimi-k2.5', position: 'coffee', workType: 'none' },
 ];
 
-// Position config for office layout
-export interface Position {
-  transform?: string;
-  top: string;
-  left?: string;
-  right?: string;
-  width?: string;
-  height?: string;
-}
-
-export const AGENT_POSITIONS: Record<string, Position> = {
-  // Center top: Blink (Commander) - overlooking the office
-  Blink: { top: '8%', left: '50%', width: '180px', height: '140px', transform: 'translateX(-50%)' },
-  
-  // Left side: Spark coder station (near Cipher) - collaboration corner
-  Spark: { top: '35%', left: '15%', width: '150px', height: '130px' },
-  
-  // Right side: Cipher data station (near Spark) - data collaboration
-  Cipher: { top: '35%', right: '15%', width: '150px', height: '130px', left: undefined },
-  
-  // Quiet corner: Volt (Reasoner) - needs space
-  Volt: { top: '20%', left: '5%', width: '140px', height: '130px' },
-  
-  // Art corner: Pixel (Creative) - with color swatches on wall
-  Pixel: { top: '20%', right: '5%', width: '140px', height: '130px', left: undefined },
-  
-  // Window side: Scout (Researcher) - watching the stars
-  Scout: { top: '55%', left: '5%', width: '140px', height: '130px' },
-  
-  // Center position: Echo (Reviewer) - can see everyone's work
-  Echo: { top: '55%', left: '50%', width: '150px', height: '130px', transform: 'translateX(-50%)' },
-  
-  // Big desk: Atlas (Long Context) - massive workspace
-  Atlas: { top: '78%', left: '50%', width: '220px', height: '150px', transform: 'translateX(-50%)' },
+// Work zone positions (where agents move when active)
+export const WORK_ZONES = {
+  Blink: { x: 20, y: 15 },
+  Spark: { x: 35, y: 35 },
+  Volt: { x: 5, y: 25 },
+  Pixel: { x: 20, y: 35 },
+  Scout: { x: 5, y: 45 },
+  Echo: { x: 35, y: 15 },
+  Cipher: { x: 35, y: 25 },
+  Atlas: { x: 20, y: 45 },
 };
+
+// Coffee station (standby area)
+export const COFFEE_STATION = { x: 50, y: 80 };
+
+// Completed area
+export const COMPLETED_AREA = { x: 80, y: 10 };
