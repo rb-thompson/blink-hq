@@ -99,7 +99,7 @@ export default function Dashboard() {
         setGatewayOk(true);
       } else {
         setGatewayOk(false);
-        console.warn('OpenClaw sessions fetch failed — start OpenClaw gateway?');
+        console.warn('OpenClaw sessions fetch failed - start OpenClaw gateway?');
       }
 
         // Fetch recent messages from primary session's transcript
@@ -120,7 +120,7 @@ export default function Dashboard() {
       }
     } catch (e) {
       setGatewayOk(false);
-      console.warn('OpenClaw offline — data will show 0. Run: openclaw gateway start', e);
+      console.warn('OpenClaw offline - data will show 0. Run: openclaw gateway start', e);
     }
 
     try {
