@@ -1,3 +1,16 @@
+/**
+ * Agent Config API
+ *
+ * Reads and writes sub-agent template definitions stored in data/agents.json.
+ * These are NOT live OpenClaw sessions — they're Brandon's planning config:
+ * which named sub-agents he commonly spawns, what model they use, their
+ * role description, icon, and color for the visualizer.
+ *
+ * GET  /api/agents  → returns the full agents array
+ * POST /api/agents  → replaces the full agents array (sent as JSON body)
+ *
+ * The /agents page uses this to render the config UI and save changes.
+ */
 import fs from 'fs';
 import path from 'path';
 

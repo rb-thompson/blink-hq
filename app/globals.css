@@ -12,6 +12,14 @@
   --text-dim: #6a6a8a;
 }
 
+html {
+  /* Scale the UI to a comfortable size at 100% browser zoom.
+     The pixel-art aesthetic uses intentionally small font sizes (6–11px),
+     so we bump the rendered scale to 1.3 to hit ~130% without requiring
+     the user to manually zoom in their browser. */
+  zoom: 1.3;
+}
+
 body {
   background: var(--bg-deep);
   color: var(--text);

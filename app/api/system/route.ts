@@ -1,5 +1,25 @@
+/**
+ * System Stats API
+ *
+ * Returns real hardware metrics sampled directly from the Node.js os module.
+ * CPU usage is computed by comparing idle/total CPU times across a 100ms window
+ * (same approach as most system monitors — a point-in-time snapshot, not a rolling average).
+ *
+ * Response shape:
+ * {
+ *   cpu: number           // 0–100 percent
+ *   memory: {
+ *     used: number        // bytes
+ *     total: number       // bytes
+ *     percent: number     // 0–100
+ *   }
+ *   uptime: number        // process uptime in seconds
+ *   loadAvg: number[]     // [1m, 5m, 15m] load averages
+ * }
+ */
 import os from 'os';
 
+/** Samples CPU idle vs total across a 100ms window to compute usage %. */
 function getCpuUsage(): Promise<number> {
   return new Promise((resolve) => {
     const start = os.cpus();
