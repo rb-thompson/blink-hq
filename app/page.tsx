@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import Sparkline from '@fnando/sparkline';
 
 interface Session {
   id: string;
@@ -18,11 +19,16 @@ interface SubAgent {
   model?: string;
 }
 
+interface HistorySparklines {
+  cpu: number[];
+  ram_pct: number[];
+  gpu_util: number[];
+}
+
 interface SystemStats {
-  cpu: number;
-  memory: { used: number; total: number; percent: number };
-  uptime: number;
-  loadAvg: number[];
+  current: { /* new shape */ };
+  historySparklines: HistorySparklines;
+  // ...
 }
 
 interface SessionStatus {
@@ -68,6 +74,7 @@ export default function Dashboard() {
   const [subAgents, setSubAgents] = useState<SubAgent[]>([]);
   const [sessionStatus, setSessionStatus] = useState<SessionStatus | null>(null);
   const [systemStats, setSystemStats] = useState<SystemStats | null>(null);
+  const [historyData, setHistoryData] = useState<HistorySparklines>({ cpu: [], ram_pct: [] });
   const [gatewayOk, setGatewayOk] = useState<boolean | null>(null);
   const [recentMessages, setRecentMessages] = useState<TranscriptMessage[]>([]);
   const [time, setTime] = useState('--:--:--');
@@ -140,6 +147,7 @@ export default function Dashboard() {
       if (sysRes.ok) {
         const sysData = await sysRes.json();
         setSystemStats(sysData);
+        setHistoryData(sysData.historySparklines ?? { cpu: [], ram_pct: [] });
       }
     } catch { /* ignore */ }
   }, []);
@@ -341,20 +349,32 @@ export default function Dashboard() {
               ▸ SYSTEM HEALTH
             </div>
             {[
-              { label: 'CPU', value: systemStats?.cpu ?? 0, color: '#00f0ff' },
-              { label: 'MEMORY', value: systemStats?.memory.percent ?? 0, color: '#00ff88' },
+              { label: 'CPU', value: systemStats?.current.cpu.avg ?? 0, color: '#00f0ff', spark: historyData.cpu.slice().reverse() },
+              { label: 'MEMORY', value: systemStats?.current.ram.pct ?? 0, color: '#00ff88', spark: historyData.ram_pct.slice().reverse() },
             ].map(m => (
               <div key={m.label} className="mb-3">
                 <div className="flex justify-between pixel-text mb-1" style={{ fontSize: '7px' }}>
                   <span style={{ color: m.color }}>{m.label}</span>
                   <span style={{ color: m.color + 'aa' }}>{m.value}%</span>
                 </div>
-                <div className="h-1.5 rounded-full" style={{ backgroundColor: '#ffffff08' }}>
+                <div className="h-1.5 rounded-full mb-1" style={{ backgroundColor: '#ffffff08' }}>
                   <div className="h-full rounded-full transition-all" style={{
                     width: `${m.value}%`,
                     backgroundColor: m.value > 80 ? '#ff00aa' : m.color,
                     boxShadow: `0 0 4px ${m.color}40`,
                   }} />
+                </div>
+                <div className="flex justify-between items-center mt-1 opacity-75">
+                  <span className="pixel-text" style={{ fontSize: '6px', color: '#6a6a8a' }}>spark (20pts)</span>
+                  <Sparkline
+                    data={m.spark}
+                    width="60"
+                    height="12"
+                    stroke="#00ff00"
+                    strokeWidth="1.2"
+                    fill="transparent"
+                    style={{ filter: 'drop-shadow(0 0 2px #00ff0040)' }}
+                  />
                 </div>
               </div>
             ))}
