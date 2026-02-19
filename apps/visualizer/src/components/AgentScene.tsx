@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { AGENTS, Agent, WORK_ZONES, COFFEE_POSITIONS, COFFEE_STATION, COMPLETED_AREA } from './types';
 import Workstation from './Workstation';
-import { AgentAvatar } from './AgentAvatars';
 
 interface AgentPosition {
   x: number;
@@ -82,12 +81,13 @@ export default function AgentScene() {
       [agent.name]: Math.random() < 0.7 ? 'active' : 'thinking'
     }));
 
+    // Slow glide animation - 2.5 seconds
     setTimeout(() => {
       setAgentPositions(prev => ({
         ...prev,
         [agent.name]: { x: workZone.x, y: workZone.y, isMoving: false, isAtWorkstation: true }
       }));
-    }, 1000);
+    }, 2500);
   };
 
   const moveToCoffee = (agent: Agent) => {
@@ -103,12 +103,13 @@ export default function AgentScene() {
       [agent.name]: 'idle'
     }));
 
+    // Slow glide animation - 2.5 seconds
     setTimeout(() => {
       setAgentPositions(prev => ({
         ...prev,
         [agent.name]: { x: coffeePos.x, y: coffeePos.y, isMoving: false, isAtWorkstation: false }
       }));
-    }, 1000);
+    }, 2500);
   };
 
   return (
@@ -125,27 +126,57 @@ export default function AgentScene() {
         </svg>
       </div>
 
-      {/* Coffee station - left side */}
+      {/* Coffee station - left side with agent slots */}
       <div
         className="absolute"
         style={{ left: '3%', top: '20%', width: '25%', height: '60%' }}
       >
-        <div className="relative w-full h-full flex items-center justify-center">
-          <svg width="220" height="180" viewBox="0 0 220 180" fill="none">
-            {/* Coffee machine */}
-            <rect x="35" y="50" width="150" height="100" rx="20" fill="#2a2a2a" stroke="#404040" strokeWidth="3" />
-            <rect x="45" y="60" width="130" height="18" rx="9" fill="#1a1a1a" />
-            <rect x="45" y="82" width="130" height="18" rx="9" fill="#1a1a1a" />
-            <circle cx="65" cy="115" r="9" fill="#333" />
-            <circle cx="90" cy="115" r="9" fill="#333" />
-            <circle cx="135" cy="115" r="9" fill="#8B4513" />
-            <circle cx="160" cy="115" r="9" fill="#8B4513" />
-            {/* Steam */}
-            <path d="M125 30 Q135 20 145 30 Q135 15 125 30" stroke="#fff" strokeWidth="2" opacity="0.6" />
-            <path d="M150 25 Q160 15 170 25 Q160 10 150 25" stroke="#fff" strokeWidth="2" opacity="0.4" />
+        <div className="relative w-full h-full">
+          {/* Agent slots visualization */}
+          <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" className="absolute inset-0">
+            {/* Slot markers for agents */}
+            <circle cx="40" cy="60" r="12" fill="none" stroke="#444" strokeWidth="1" opacity="0.5" />
+            <circle cx="80" cy="60" r="12" fill="none" stroke="#444" strokeWidth="1" opacity="0.5" />
+            <circle cx="120" cy="60" r="12" fill="none" stroke="#444" strokeWidth="1" opacity="0.5" />
+            <circle cx="160" cy="60" r="12" fill="none" stroke="#444" strokeWidth="1" opacity="0.5" />
+            <circle cx="40" cy="140" r="12" fill="none" stroke="#444" strokeWidth="1" opacity="0.5" />
+            <circle cx="80" cy="140" r="12" fill="none" stroke="#444" strokeWidth="1" opacity="0.5" />
+            <circle cx="120" cy="140" r="12" fill="none" stroke="#444" strokeWidth="1" opacity="0.5" />
+            <circle cx="160" cy="140" r="12" fill="none" stroke="#444" strokeWidth="1" opacity="0.5" />
+
+            {/* Slot labels */}
+            <text x="40" y="65" textAnchor="middle" fill="#666" fontSize="8" fontFamily="monospace">A</text>
+            <text x="80" y="65" textAnchor="middle" fill="#666" fontSize="8" fontFamily="monospace">B</text>
+            <text x="120" y="65" textAnchor="middle" fill="#666" fontSize="8" fontFamily="monospace">C</text>
+            <text x="160" y="65" textAnchor="middle" fill="#666" fontSize="8" fontFamily="monospace">D</text>
+            <text x="40" y="145" textAnchor="middle" fill="#666" fontSize="8" fontFamily="monospace">E</text>
+            <text x="80" y="145" textAnchor="middle" fill="#666" fontSize="8" fontFamily="monospace">F</text>
+            <text x="120" y="145" textAnchor="middle" fill="#666" fontSize="8" fontFamily="monospace">G</text>
+            <text x="160" y="145" textAnchor="middle" fill="#666" fontSize="8" fontFamily="monospace">H</text>
           </svg>
+
+          {/* Coffee machine in center */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <svg width="120" height="100" viewBox="0 0 120 100" fill="none">
+              {/* Coffee machine */}
+              <rect x="20" y="25" width="80" height="60" rx="10" fill="#2a2a2a" stroke="#404040" strokeWidth="2" />
+              <rect x="25" y="30" width="70" height="12" rx="6" fill="#1a1a1a" />
+              <rect x="25" y="45" width="70" height="12" rx="6" fill="#1a1a1a" />
+              <circle cx="40" cy="70" r="6" fill="#333" />
+              <circle cx="55" cy="70" r="6" fill="#333" />
+              <circle cx="75" cy="70" r="6" fill="#8B4513" />
+              <circle cx="90" cy="70" r="6" fill="#8B4513" />
+              {/* Steam */}
+              <path d="M65 15 Q70 10 75 15 Q70 5 65 15" stroke="#fff" strokeWidth="2" opacity="0.6" />
+              <path d="M80 12 Q85 7 90 12 Q85 2 80 12" stroke="#fff" strokeWidth="2" opacity="0.4" />
+            </svg>
+          </div>
+
           <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-sm text-slate-400 font-mono font-bold">
             ☕ COFFEE STATION
+          </div>
+          <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-slate-500 font-mono">
+            Agent Slots: A B C D (top) • E F G H (bottom)
           </div>
         </div>
       </div>
@@ -158,24 +189,24 @@ export default function AgentScene() {
         {/* 4x2 grid of workstations */}
         <div className="grid grid-cols-2 grid-rows-4 gap-3 w-full h-full p-2">
           {/* Row 1 */}
-          <Workstation agent={AGENTS.find(a => a.name === 'Blink')!} variant="command" showAvatar={agentPositions.Blink?.isAtWorkstation} />
-          <Workstation agent={AGENTS.find(a => a.name === 'Echo')!} variant="echo" showAvatar={agentPositions.Echo?.isAtWorkstation} />
+          <Workstation agent={AGENTS.find(a => a.name === 'Blink')!} variant="command" />
+          <Workstation agent={AGENTS.find(a => a.name === 'Echo')!} variant="echo" />
 
           {/* Row 2 */}
-          <Workstation agent={AGENTS.find(a => a.name === 'Volt')!} variant="volt" showAvatar={agentPositions.Volt?.isAtWorkstation} />
-          <Workstation agent={AGENTS.find(a => a.name === 'Scout')!} variant="scout" showAvatar={agentPositions.Scout?.isAtWorkstation} />
+          <Workstation agent={AGENTS.find(a => a.name === 'Volt')!} variant="volt" />
+          <Workstation agent={AGENTS.find(a => a.name === 'Scout')!} variant="scout" />
 
           {/* Row 3 */}
-          <Workstation agent={AGENTS.find(a => a.name === 'Spark')!} variant="spark" showAvatar={agentPositions.Spark?.isAtWorkstation} />
-          <Workstation agent={AGENTS.find(a => a.name === 'Cipher')!} variant="cipher" showAvatar={agentPositions.Cipher?.isAtWorkstation} />
+          <Workstation agent={AGENTS.find(a => a.name === 'Spark')!} variant="spark" />
+          <Workstation agent={AGENTS.find(a => a.name === 'Cipher')!} variant="cipher" />
 
           {/* Row 4 */}
-          <Workstation agent={AGENTS.find(a => a.name === 'Pixel')!} variant="pixel" showAvatar={agentPositions.Pixel?.isAtWorkstation} />
-          <Workstation agent={AGENTS.find(a => a.name === 'Atlas')!} variant="atlas" showAvatar={agentPositions.Atlas?.isAtWorkstation} />
+          <Workstation agent={AGENTS.find(a => a.name === 'Pixel')!} variant="pixel" />
+          <Workstation agent={AGENTS.find(a => a.name === 'Atlas')!} variant="atlas" />
         </div>
       </div>
 
-      {/* Floating agents */}
+      {/* Floating agents - simple colored circles for now */}
       {AGENTS.map(agent => {
         const position = agentPositions[agent.name];
         if (!position || position.isAtWorkstation) return null;
@@ -185,7 +216,7 @@ export default function AgentScene() {
         return (
           <div
             key={agent.name}
-            className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-out z-20"
+            className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-[2500ms] ease-out cursor-pointer z-20"
             style={{
               left: `${position.x}%`,
               top: `${position.y}%`,
@@ -194,8 +225,17 @@ export default function AgentScene() {
             onMouseLeave={() => setHoveredAgent(null)}
           >
             <div className="relative">
-              {/* Agent avatar */}
-              <AgentAvatar name={agent.name} size={48} isActive={currentStatus === 'active' || currentStatus === 'thinking'} />
+              {/* Simple colored circle for agent */}
+              <div
+                className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-white font-bold text-xs"
+                style={{
+                  backgroundColor: agent.color,
+                  borderColor: agent.color + '80',
+                  boxShadow: currentStatus === 'active' ? `0 0 12px ${agent.color}60` : 'none',
+                }}
+              >
+                {agent.name.charAt(0)}
+              </div>
 
               {/* Hover tooltip */}
               {hoveredAgent === agent.name && (
@@ -242,9 +282,9 @@ export default function AgentScene() {
 
       {/* Instructions */}
       <div className="absolute bottom-2 left-2 text-xs text-slate-500 font-mono max-w-xs">
-        <div className="mb-1">🎲 <strong>Random Movement:</strong> Agents automatically disperse and return</div>
-        <div className="mb-1">💻 <strong>Workstations:</strong> Right side with glitchy operating screens</div>
-        <div>☕ <strong>Coffee Station:</strong> Left side standby area</div>
+        <div className="mb-1">🎯 <strong>Agent Slots:</strong> A-H positions around coffee station</div>
+        <div className="mb-1">✈️ <strong>Slow Glide:</strong> 2.5s direct path movement</div>
+        <div>🎲 <strong>Auto Movement:</strong> Random dispersal and return</div>
       </div>
 
       {/* Status summary */}

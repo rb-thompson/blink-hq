@@ -1,16 +1,11 @@
 'use client';
 
 import { Agent } from './types';
-import { AgentAvatar } from './AgentAvatars';
-import { WorkVisualization } from './AgentAvatars';
 
 const CODE_LINES = [
   'const agent = new Agent();',
   'await agent.execute(task);',
   'return response.data;',
-  'if (status === "done") {',
-  '  notify(commander);',
-  '}',
 ];
 
 const DATA_CHARS = '01█▓░▒';
@@ -48,36 +43,14 @@ function StatusDot({ status, color }: { status: string; color: string }) {
   return <div className="w-2 h-2 rounded-full" style={style} />;
 }
 
-function GlitchyMonitorScreen({ agent, variant }: { agent: Agent; variant: string }) {
+function MonitorScreen({ agent, variant }: { agent: Agent; variant: string }) {
   const isWide = variant === 'atlas' || variant === 'command';
 
   return (
     <div
       className={`relative border rounded-sm overflow-hidden ${isWide ? 'w-12 h-8' : 'w-10 h-7'}`}
-      style={{
-        borderColor: agent.color + '40',
-        backgroundColor: '#0a0e1a',
-        boxShadow: agent.status === 'active' ? `0 0 6px ${agent.color}30` : 'none',
-        animation: agent.status === 'active' ? 'glitch 0.3s infinite' : 'none',
-      }}
+      style={{ borderColor: agent.color + '40', backgroundColor: '#0a0e1a', boxShadow: agent.status === 'active' ? `0 0 6px ${agent.color}30` : 'none' }}
     >
-      {/* Glitch overlay */}
-      {agent.status === 'active' && (
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            background: `repeating-linear-gradient(
-              90deg,
-              transparent,
-              transparent 2px,
-              ${agent.color}20 2px,
-              ${agent.color}20 4px
-            )`,
-            animation: 'glitch-shift 0.2s infinite',
-          }}
-        />
-      )}
-
       {variant === 'code' && (
         <div className="absolute inset-1 overflow-hidden opacity-70" style={{ fontSize: '4px', lineHeight: '5px', color: agent.color }}>
           {CODE_LINES.map((line, i) => <div key={i} className="whitespace-nowrap truncate">{line}</div>)}
@@ -142,7 +115,7 @@ function GlitchyMonitorScreen({ agent, variant }: { agent: Agent; variant: strin
   );
 }
 
-export default function Workstation({ agent, variant, showAvatar = false }: { agent: Agent; variant?: string; showAvatar?: boolean }) {
+export default function Workstation({ agent, variant }: { agent: Agent; variant?: string }) {
   const deskColor = agent.color + '15';
   const borderColor = agent.color + '30';
   const variantType = variant || 'code';
@@ -164,16 +137,9 @@ export default function Workstation({ agent, variant, showAvatar = false }: { ag
         </div>
 
         <div className="flex gap-1 justify-center mb-1 mt-3">
-          <GlitchyMonitorScreen agent={agent} variant={variantType} />
-          {(variantType === 'atlas' || variantType === 'command') && <GlitchyMonitorScreen agent={agent} variant="data" />}
+          <MonitorScreen agent={agent} variant={variantType} />
+          {(variantType === 'atlas' || variantType === 'command') && <MonitorScreen agent={agent} variant="data" />}
         </div>
-
-        {/* Work visualization when active */}
-        {agent.status === 'active' && (
-          <div className="mt-1 opacity-80">
-            <WorkVisualization workType={agent.workType} agentColor={agent.color} />
-          </div>
-        )}
 
         <div className="text-center mt-1">
           <div className="pixel-text font-bold" style={{ fontSize: '7px', color: agent.color }}>{agent.name}</div>
@@ -184,13 +150,6 @@ export default function Workstation({ agent, variant, showAvatar = false }: { ag
           <div className="pixel-text text-center max-w-full truncate mt-1" style={{ fontSize: '5px', color: agent.color + '60' }}>{agent.task}</div>
         )}
       </div>
-
-      {/* Avatar beside workstation when working */}
-      {showAvatar && agent.status !== 'idle' && (
-        <div className="absolute -right-16 top-1/2 transform -translate-y-1/2">
-          <AgentAvatar name={agent.name} size={32} isActive={agent.status === 'active' || agent.status === 'thinking'} />
-        </div>
-      )}
     </div>
   );
 }

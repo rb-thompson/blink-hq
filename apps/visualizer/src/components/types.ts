@@ -24,11 +24,22 @@ export const AGENTS: Agent[] = [
   { name: 'Atlas', role: 'LongContext', status: 'idle', color: AGENT_COLORS.Atlas, task: 'Standing by', model: 'nvidia/moonshotai/kimi-k2.5', position: 'coffee', workType: 'none' },
 ];
 
-// Initial positions around coffee station (evenly spaced in a circle)
+// Initial positions around coffee station in specific slots:
+// #########
+// #A#B#C#D#
+// ##XXXXXX##
+// ##XXXXXX##
+// #E#F#G#H#
+// #########
 export const COFFEE_POSITIONS = {
-  Scout: { x: 12, y: 35 },   // Top-left
-  Atlas: { x: 18, y: 65 },   // Bottom-left
-  Echo: { x: 12, y: 50 },    // Left-center (but will be at completed)
+  Scout: { x: 8, y: 30 },    // A - Top-left
+  Atlas: { x: 18, y: 30 },   // B - Top-center-left
+  Echo: { x: 8, y: 70 },     // E - Bottom-left
+  Cipher: { x: 18, y: 70 },  // F - Bottom-center-left
+  Blink: { x: 28, y: 30 },   // C - Top-center-right
+  Volt: { x: 38, y: 30 },    // D - Top-right
+  Spark: { x: 28, y: 70 },   // G - Bottom-center-right
+  Pixel: { x: 38, y: 70 },   // H - Bottom-right
 };
 
 // Work zone positions (within the workstation grid area on the right)
