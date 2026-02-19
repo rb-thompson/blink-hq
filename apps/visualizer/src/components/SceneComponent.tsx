@@ -1,117 +1,3 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { AGENTS, Agent, WORK_ZONES, COFFEE_POSITIONS, COFFEE_STATION, COMPLETED_AREA } from './types';
-import Workstation from './Workstation';
-
-interface AgentPosition {
-  x: number;
-  y: number;
-  isMoving: boolean;
-  isAtWorkstation: boolean;
-}
-
-export default function AgentScene() {
-  const [agentPositions, setAgentPositions] = useState<Record<string, AgentPosition>>({});
-  const [hoveredAgent, setHoveredAgent] = useState<string | null>(null);
-  const [agentStatuses, setAgentStatuses] = useState<Record<string, Agent['status']>>({});
-
-  // Initialize positions and statuses
-  useEffect(() => {
-    const initialPositions: Record<string, AgentPosition> = {};
-    const initialStatuses: Record<string, Agent['status']> = {};
-
-    AGENTS.forEach(agent => {
-      if (agent.position === 'coffee') {
-        const coffeePos = COFFEE_POSITIONS[agent.name as keyof typeof COFFEE_POSITIONS] || COFFEE_STATION;
-        initialPositions[agent.name] = { x: coffeePos.x, y: coffeePos.y, isMoving: false, isAtWorkstation: false };
-      } else if (agent.position === 'workstation') {
-        const zone = WORK_ZONES[agent.name as keyof typeof WORK_ZONES];
-        initialPositions[agent.name] = { x: zone.x, y: zone.y, isMoving: false, isAtWorkstation: true };
-      } else {
-        initialPositions[agent.name] = { x: COMPLETED_AREA.x, y: COMPLETED_AREA.y, isMoving: false, isAtWorkstation: false };
-      }
-      initialStatuses[agent.name] = agent.status;
-    });
-
-    setAgentPositions(initialPositions);
-    setAgentStatuses(initialStatuses);
-  }, []);
-
-  // Random movement system
-  useEffect(() => {
-    const movementInterval = setInterval(() => {
-      const agentsAtCoffee = AGENTS.filter(agent =>
-        agent.position === 'coffee' &&
-        agentStatuses[agent.name] === 'idle'
-      );
-
-      const agentsAtWork = AGENTS.filter(agent =>
-        agentStatuses[agent.name] === 'active' ||
-        agentStatuses[agent.name] === 'thinking'
-      );
-
-      // Randomly move agent from coffee to workstation
-      if (agentsAtCoffee.length > 0 && Math.random() < 0.3) {
-        const randomAgent = agentsAtCoffee[Math.floor(Math.random() * agentsAtCoffee.length)];
-        moveToWorkstation(randomAgent);
-      }
-
-      // Randomly move agent from workstation back to coffee
-      if (agentsAtWork.length > 0 && Math.random() < 0.2) {
-        const randomAgent = agentsAtWork[Math.floor(Math.random() * agentsAtWork.length)];
-        moveToCoffee(randomAgent);
-      }
-    }, 3000); // Check every 3 seconds
-
-    return () => clearInterval(movementInterval);
-  }, [agentStatuses]);
-
-  const moveToWorkstation = (agent: Agent) => {
-    const workZone = WORK_ZONES[agent.name as keyof typeof WORK_ZONES];
-    if (!workZone) return;
-
-    setAgentPositions(prev => ({
-      ...prev,
-      [agent.name]: { ...prev[agent.name], isMoving: true }
-    }));
-
-    setAgentStatuses(prev => ({
-      ...prev,
-      [agent.name]: Math.random() < 0.7 ? 'active' : 'thinking'
-    }));
-
-    // Slow glide animation - 2.5 seconds
-    setTimeout(() => {
-      setAgentPositions(prev => ({
-        ...prev,
-        [agent.name]: { x: workZone.x, y: workZone.y, isMoving: false, isAtWorkstation: true }
-      }));
-    }, 2500);
-  };
-
-  const moveToCoffee = (agent: Agent) => {
-    const coffeePos = COFFEE_POSITIONS[agent.name as keyof typeof COFFEE_POSITIONS] || COFFEE_STATION;
-
-    setAgentPositions(prev => ({
-      ...prev,
-      [agent.name]: { ...prev[agent.name], isMoving: true }
-    }));
-
-    setAgentStatuses(prev => ({
-      ...prev,
-      [agent.name]: 'idle'
-    }));
-
-    // Slow glide animation - 2.5 seconds
-    setTimeout(() => {
-      setAgentPositions(prev => ({
-        ...prev,
-        [agent.name]: { x: coffeePos.x, y: coffeePos.y, isMoving: false, isAtWorkstation: false }
-      }));
-    }, 2500);
-  };
-
   return (
     <div className="relative w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
       {/* Subtle background pattern */}
@@ -188,75 +74,68 @@ export default function AgentScene() {
       >
         {/* 4x2 grid of workstations */}
         <div className="grid grid-cols-2 grid-rows-4 gap-3 w-full h-full p-2">
-          {/* Row 1 */}
-          <Workstation agent={AGENTS.find(a => a.name === 'Blink')!} variant="command" />
-          <Workstation agent={AGENTS.find(a => a.name === 'Echo')!} variant="echo" />
-
-          {/* Row 2 */}
-          <Workstation agent={AGENTS.find(a => a.name === 'Volt')!} variant="volt" />
-          <Workstation agent={AGENTS.find(a => a.name === 'Scout')!} variant="scout" />
-
-          {/* Row 3 */}
-          <Workstation agent={AGENTS.find(a => a.name === 'Spark')!} variant="spark" />
-          <Workstation agent={AGENTS.find(a => a.name === 'Cipher')!} variant="cipher" />
-
-          {/* Row 4 */}
-          <Workstation agent={AGENTS.find(a => a.name === 'Pixel')!} variant="pixel" />
-          <Workstation agent={AGENTS.find(a => a.name === 'Atlas')!} variant="atlas" />
+          <div className="w-32 h-24 bg-slate-700 rounded border flex items-center justify-center">
+            <div className="text-xs text-white font-mono">Blink</div>
+          </div>
+          <div className="w-32 h-24 bg-slate-700 rounded border flex items-center justify-center">
+            <div className="text-xs text-white font-mono">Echo</div>
+          </div>
+          <div className="w-32 h-24 bg-slate-700 rounded border flex items-center justify-center">
+            <div className="text-xs text-white font-mono">Volt</div>
+          </div>
+          <div className="w-32 h-24 bg-slate-700 rounded border flex items-center justify-center">
+            <div className="text-xs text-white font-mono">Scout</div>
+          </div>
+          <div className="w-32 h-24 bg-slate-700 rounded border flex items-center justify-center">
+            <div className="text-xs text-white font-mono">Spark</div>
+          </div>
+          <div className="w-32 h-24 bg-slate-700 rounded border flex items-center justify-center">
+            <div className="text-xs text-white font-mono">Cipher</div>
+          </div>
+          <div className="w-32 h-24 bg-slate-700 rounded border flex items-center justify-center">
+            <div className="text-xs text-white font-mono">Pixel</div>
+          </div>
+          <div className="w-32 h-24 bg-slate-700 rounded border flex items-center justify-center">
+            <div className="text-xs text-white font-mono">Atlas</div>
+          </div>
         </div>
       </div>
 
-      {/* Floating agents - simple colored circles for now */}
+      {/* Agents at coffee station */}
       {AGENTS.map(agent => {
-        const position = agentPositions[agent.name];
-        if (!position || position.isAtWorkstation) return null;
+        if (workstationAgents.has(agent.name)) return null; // Skip agents at workstations
 
-        const currentStatus = agentStatuses[agent.name] || agent.status;
+        const position = COFFEE_POSITIONS[agent.name as keyof typeof COFFEE_POSITIONS];
+        if (!position) return null;
+
+        const isMoving = movingAgents.has(agent.name);
 
         return (
           <div
             key={agent.name}
-            className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-[2500ms] ease-out cursor-pointer z-20"
+            className={`absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 transition-all duration-[2500ms] ease-out ${
+              isMoving ? 'opacity-50' : 'opacity-100'
+            }`}
             style={{
-              left: `${position.x}%`,
-              top: `${position.y}%`,
+              left: isMoving ? `${WORK_ZONES[agent.name as keyof typeof WORK_ZONES].x}%` : `${position.x}%`,
+              top: isMoving ? `${WORK_ZONES[agent.name as keyof typeof WORK_ZONES].y}%` : `${position.y}%`,
             }}
-            onMouseEnter={() => setHoveredAgent(agent.name)}
-            onMouseLeave={() => setHoveredAgent(null)}
           >
             <div className="relative">
-              {/* Simple colored circle for agent */}
+              {/* Agent avatar */}
               <div
                 className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-white font-bold text-xs"
                 style={{
                   backgroundColor: agent.color,
                   borderColor: agent.color + '80',
-                  boxShadow: currentStatus === 'active' ? `0 0 12px ${agent.color}60` : 'none',
+                  boxShadow: '0 0 8px ' + agent.color + '40',
                 }}
               >
                 {agent.name.charAt(0)}
               </div>
 
-              {/* Hover tooltip */}
-              {hoveredAgent === agent.name && (
-                <div
-                  className="absolute top-full mt-2 p-2 rounded font-mono text-xs whitespace-nowrap z-30"
-                  style={{
-                    backgroundColor: '#1a1a2a',
-                    border: `1px solid ${agent.color}40`,
-                    color: '#e0e0e0',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                  }}
-                >
-                  <div style={{ color: agent.color }}>{agent.name}</div>
-                  <div className="text-slate-400">{agent.role}</div>
-                  <div className="text-xs mt-1">Status: {currentStatus.toUpperCase()}</div>
-                </div>
-              )}
-
               {/* Movement trail */}
-              {position.isMoving && (
+              {isMoving && (
                 <div
                   className="absolute inset-0 rounded-full animate-ping opacity-50"
                   style={{
@@ -270,13 +149,50 @@ export default function AgentScene() {
         );
       })}
 
+      {/* Agents at workstations */}
+      {AGENTS.map(agent => {
+        if (!workstationAgents.has(agent.name)) return null; // Skip agents not at workstations
+
+        const position = WORK_ZONES[agent.name as keyof typeof WORK_ZONES];
+        if (!position) return null;
+
+        const isMoving = movingAgents.has(agent.name);
+
+        return (
+          <div
+            key={`workstation-${agent.name}`}
+            className={`absolute transform -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-[2500ms] ease-out ${
+              isMoving ? 'opacity-50' : 'opacity-100'
+            }`}
+            style={{
+              left: isMoving ? `${COFFEE_POSITIONS[agent.name as keyof typeof COFFEE_POSITIONS].x}%` : `${position.x}%`,
+              top: isMoving ? `${COFFEE_POSITIONS[agent.name as keyof typeof COFFEE_POSITIONS].y}%` : `${position.y}%`,
+            }}
+          >
+            <div className="relative">
+              {/* Agent avatar at workstation */}
+              <div
+                className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-white font-bold text-xs"
+                style={{
+                  backgroundColor: agent.color,
+                  borderColor: agent.color + '80',
+                  boxShadow: '0 0 6px ' + agent.color + '60',
+                }}
+              >
+                {agent.name.charAt(0)}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
       {/* Scene title */}
       <div className="absolute top-2 left-1/2 transform -translate-x-1/2">
-        <h1 className="text-xl font-mono font-bold text-slate-300 tracking-wider">
+        <h1 className="text-2xl font-mono font-bold text-slate-300 tracking-wider">
           AGENT OPERATIONS
         </h1>
         <div className="text-xs text-slate-500 text-center mt-1 font-mono">
-          Live Activity Visualization
+          Live Activity Visualization - {AGENTS.length} Agents
         </div>
       </div>
 
@@ -292,13 +208,13 @@ export default function AgentScene() {
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
           <span className="text-slate-400">
-            Active: {Object.values(agentStatuses).filter(status => status === 'active' || status === 'thinking').length}
+            Active: {activeCount}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-slate-500"></div>
           <span className="text-slate-400">
-            Standby: {Object.values(agentStatuses).filter(status => status === 'idle').length}
+            Standby: {standbyCount}
           </span>
         </div>
       </div>
