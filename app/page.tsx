@@ -130,7 +130,8 @@ export default function Dashboard() {
         const saData = await saRes.json();
         const agentsArray: SubAgent[] = Array.isArray(saData) ? saData : (saData?.agents ?? saData?.subagents ?? []);
         setSubAgents(agentsArray);
-      } else {
+      }
+      if (!saRes.ok) {
         console.warn('OpenClaw subagents fetch failed');
       }
     } catch (e) {
