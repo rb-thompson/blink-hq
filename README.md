@@ -4,7 +4,9 @@ Mission control for Brandon's AI agent operation. A local-only dashboard that co
 
 ## What it is
 
-A single Next.js app with four pages:
+A single Next.js app with four working pages and five placeholders for future features:
+
+### Working Pages
 
 | Page | Route | What it does |
 |------|-------|--------------|
@@ -12,6 +14,16 @@ A single Next.js app with four pages:
 | Visualizer | `/visualizer` | 8-bit top-down office — Blink at the desk, sub-agents appear/disappear in real time |
 | Agents | `/agents` | Config panel for sub-agent templates (name, role, model, icon, color) |
 | Logs | `/logs` | Scrollable session transcript from the live JSONL file |
+
+### Placeholder Pages (Coming Soon)
+
+| Page | Route | Planned Features |
+|------|-------|------------------|
+| Chat | `/chat` | Direct Blink chat interface, command runner |
+| Memory | `/memory` | View/search/edit MEMORY.md + daily notes, semantic search |
+| Tasks | `/tasks` | Agent task queue + cron job management |
+| Docs | `/docs` | OpenClaw skills + API reference browser |
+| Settings | `/settings` | Alerts, theme, database settings |
 
 ## Stack
 
@@ -96,4 +108,4 @@ Tracked on GitHub. Deployments are local-only for now — no Railway or Vercel c
 
 - `zoom: 1.3` is set on `html` in globals.css because the pixel aesthetic uses intentionally tiny font sizes (6–11px) — this bakes in the right scale at 100% browser zoom.
 - The visualizer shows *real* sub-agents from OpenClaw, not a hardcoded roster. If no sub-agents are running, the workstations sit dark.
-- The `agents/` directory in the repo root (not `app/agents/`) contains the old `SQUAD.md` from the previous monorepo — can be cleaned up.
+- Placeholder pages are intentionally left in the sidebar for UI consistency — they'll be built out as needed.
